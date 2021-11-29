@@ -2,7 +2,7 @@
 
 ## Overview
 
-The aim of the project is to implement a soultion for automation of warehouses using robot swarms. We have chosen to implement Ackermann steering for many of its advantages. The most important one is that it does not slip in higher velocities, this is achieved by steering the  inside  wheel at a greater angle than the outside wheel.This is very crucial as it ensures longevity of the the wheels and that the rover is stable and controllable.
+The aim of the project is to implement a soultion for automation of warehouses using robot swarms. In our proposed system, a group of robots closer to the target object, coordinate with each other based on the relative positions to the target object and group together to pick the object and deliver it to the object's goal position.
 
 The following assumptions are made while developing this project :-
 
@@ -28,8 +28,8 @@ The initial activity diagram is here below
 The initial UML is here below
 ![](UML/UML.png)
 
-## Important Links
-
+<!-- ## Important Links
+ -->
 <!-- [Proposal Phase-0](https://drive.google.com/file/d/1umYMgm8mL1ALpWycH2YrRFYiQv6a0TN-/view?usp=sharing)
 
 [Proposal Phase-1 Update](https://drive.google.com/file/d/1YsaQfGZgOE7c7Dwa6bHzNXLxi3fZrg2r/view)
