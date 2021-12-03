@@ -36,7 +36,7 @@ class SwarmMaster {
      * 
      * @return std::vector<Assignment> 
      */
-    std::vector<Assignment> assign_robot_to_crate();
+    std::vector<Assignment> assign_robots_to_crates();
 
     /**
      * @brief Grab next task from task queue and get it done.
