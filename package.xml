@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>test_circle</name>
+  <name>warehouse_swarm</name>
   <version>0.0.0</version>
-  <description>The test_circle package</description>
+  <description>The warehouse_swarm package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/test_circle</url> -->
+  <!-- <url type="website">http://wiki.ros.org/warehouse_swarm</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
