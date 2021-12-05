@@ -47,12 +47,13 @@ GrowingRadiusDesignator::SiteVec GrowingRadiusDesignator::get_designations() {
             throw std::invalid_argument("Not enough robots to complete the task!");
 
         first_iter = false;
+    }
 
     for (const auto& used_id : used_id_map) {
         for (const auto& site_id : used_id.second) {
-            auto& site = all_sites[site_id];
+            auto& site = all_sites.at(site_id);
             if (site.assigned_ids.size() < site.robots_required)
-                all_sites[site_id].assigned_ids.push_back(used_id.first);
+                all_sites.at(site_id).assigned_ids.push_back(used_id.first);
         }
     }
     
@@ -60,19 +61,4 @@ GrowingRadiusDesignator::SiteVec GrowingRadiusDesignator::get_designations() {
         ret->push_back(site.second);
 
     return ret;
-
-
-
-
-
-    //     if (used_id.second.size() > 1){
-    //         int min_id = 0;
-    //         int min_dist = 1000;
-    //         for (const auto site_id : used_id.second) {
-                
-    //         }
-    //     }
-    //     all_sites[used_id.second[0]].assigned_ids.push_back(used_id.first);
-    // }
-
 }

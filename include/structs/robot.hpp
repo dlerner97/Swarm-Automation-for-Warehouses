@@ -20,4 +20,10 @@ struct Robot {
         this->id = _id;
         this->pos = _pos;
     }
+
+    Robot(const Robot& robot) {
+        this->id = robot.id;
+        this->pos = robot.pos;
+        this->assigned = robot.assigned;
+    }
 };

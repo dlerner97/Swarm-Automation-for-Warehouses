@@ -26,11 +26,11 @@ class AssignmentDesignator {
  public:
     AssignmentDesignator(std::vector<Site>& sites, std::vector<Robot>& robots) {
         for (const auto& robot : robots) {
-            all_robots[robot.id] = robot;
+            all_robots.emplace(robot.id, robot);
         }
 
         for (const auto& site : sites) {
-            all_sites[site.site_id] = site;
+            all_sites.emplace(site.site_id, site);
         }
     }
     ~AssignmentDesignator() {}

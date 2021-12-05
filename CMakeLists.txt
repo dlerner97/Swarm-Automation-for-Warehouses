@@ -102,7 +102,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include/structs include/swarm_master include/swarm_worker include/task_orchestrator
   LIBRARIES warehouse_swarm
   CATKIN_DEPENDS roscpp std_msgs
   DEPENDS system_lib
@@ -115,7 +115,10 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  ${CMAKE_SOURCE_DIR}/include/structs
+  ${CMAKE_SOURCE_DIR}/include/swarm_master
+  ${CMAKE_SOURCE_DIR}/include/swarm_worker
+  ${CMAKE_SOURCE_DIR}/include/task_orchestrator
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -134,8 +137,13 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/warehouse_swarm_node.cpp)
 
-add_executable(circle src/move_circle.cpp)
-target_link_libraries(circle ${catkin_LIBRARIES})
+add_executable(warehouse_swarm
+  src/swarm_master/assignment_designator.cpp
+  src/swarm_master/site.cpp
+  src/swarm_master/swarm_master.cpp
+  src/main.cpp
+)
+target_link_libraries(warehouse_swarm ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

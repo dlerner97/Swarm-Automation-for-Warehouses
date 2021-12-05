@@ -13,7 +13,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include "../../include/structs/site.hpp"
+#include "../../include/swarm_master/site.hpp"
 
 void Site::populate_robot_dists(std::unordered_map<int, Robot>& robots) {
     for (const auto& robot : robots) {

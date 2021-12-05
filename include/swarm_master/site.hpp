@@ -25,11 +25,10 @@ struct RobotDist {
         this->robot_id = _id;
         this->dist_sq = _dist;
     }
+    bool operator<(const RobotDist& d2) {
+        return this->dist_sq < d2.dist_sq;
+    }
 };
-
-bool operator<(const RobotDist& d1, const RobotDist& d2) {
-    return d1.dist_sq < d2.dist_sq;
-}
 
 class Site {
  public:
@@ -52,6 +51,19 @@ class Site {
         if (val < 2) val = 2;
         robots_required = static_cast<int>(val);
         crate = _crate;
+    }
+
+    Site(const Site& site) {
+        this->assigned_ids = site.assigned_ids;
+        this->crate = site.crate;
+        this->dist_to_robots = site.dist_to_robots;
+        this->pos = site.pos;
+        this->site_id = site.site_id;
+        this->robots_required = site.robots_required;
+    }
+
+    Site& operator=(Site& site) {
+        return site;
     }
 
     void populate_robot_dists(std::unordered_map<int, Robot>& robots);
