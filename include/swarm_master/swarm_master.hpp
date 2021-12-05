@@ -42,7 +42,7 @@ class SwarmMaster {
     * @param robot 
     * @return int 
     */
-   int add_robot_to_swarm(Robot robot);
+   int add_robot_to_swarm(std::array<double, 2>);
 
    /**
     * @brief Assign all robots to designated crates

@@ -13,14 +13,11 @@
 #include "../../include/swarm_master/swarm_master.hpp"
 #include "../../include/swarm_master/assignment_designator.hpp"
 
-int SwarmMaster::add_robot_to_swarm(Robot robot) {
+int SwarmMaster::add_robot_to_swarm(std::array<double, 2> pos_init) {
     int id;
     if (assigned_ids.empty()) id = 0;
     else id = *(assigned_ids.end()-1) + 1;
     assigned_ids.push_back(id);
-
-    robot.id = id;
-    robots_avail.push_back(robot);
-
+    robots_avail.push_back({id, pos_init});
     return id;
 }
