@@ -22,32 +22,40 @@
 
 class SwarmMaster {
  protected:
-    std::vector<int> assigned_ids;
-    std::vector<Robot> robots_avail{};
-    std::vector<Site> sites{};
-    std::queue<Task> task_queue;
+   std::vector<int> assigned_ids{};
+   std::vector<Robot> robots_avail{};
+   std::vector<Site> sites{};
+   std::queue<Task> task_queue;
  public:
-    SwarmMaster(/* args */) {}
-    ~SwarmMaster() {}
+   SwarmMaster(/* args */) {}
+   ~SwarmMaster() {}
 
-    /**
-     * @brief Add task to task queue
-     * 
-     */
-    void add_to_task_queue(std::vector<Crate>);
+   /**
+    * @brief Add task to task queue
+    * 
+    */
+   void add_to_task_queue(std::vector<Crate>);
 
-    /**
-     * @brief Assign all robots to designated crates
-     * 
-     * @return std::vector<Assignment> 
-     */
-    std::vector<Assignment> assign_robots_to_crates();
+   /**
+    * @brief Add robot to swarm
+    * 
+    * @param robot 
+    * @return int 
+    */
+   int add_robot_to_swarm(Robot robot);
 
-    /**
-     * @brief Grab next task from task queue and get it done.
-     * 
-     * @return true 
-     * @return false 
-     */
-    bool perform_next_task();
+   /**
+    * @brief Assign all robots to designated crates
+    * 
+    * @return std::vector<Assignment> 
+    */
+   std::vector<Assignment> assign_robots_to_crates();
+
+   /**
+    * @brief Grab next task from task queue and get it done.
+    * 
+    * @return true 
+    * @return false 
+    */
+   bool perform_next_task();
 };
