@@ -13,14 +13,18 @@
 
 #include <vector>
 #include <queue>
+#include "./site.hpp"
 #include "../structs/task.hpp"
 #include "../structs/crate.hpp"
+#include "../structs/robot.hpp"
 #include "../structs/assignment.hpp"
 #include "./assignment_designator.hpp"
 
 class SwarmMaster {
  protected:
     std::vector<int> assigned_ids;
+    std::vector<Robot> robots_avail{};
+    std::vector<Site> sites{};
     std::queue<Task> task_queue;
  public:
     SwarmMaster(/* args */) {}

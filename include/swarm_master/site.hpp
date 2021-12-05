@@ -14,7 +14,7 @@
 #include <array>
 #include <vector>
 #include <unordered_map>
-#include "./robot.hpp"
+#include "../structs/robot.hpp"
 
 struct RobotDist {
     int robot_id;

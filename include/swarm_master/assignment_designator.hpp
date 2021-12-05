@@ -16,7 +16,7 @@
 #include <memory>
 #include <unordered_map>
 #include "../structs/robot.hpp"
-#include "../structs/site.hpp"
+#include "./site.hpp"
 
 class AssignmentDesignator {
  protected:
