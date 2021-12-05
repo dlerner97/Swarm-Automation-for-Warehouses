@@ -206,11 +206,18 @@ target_link_libraries(warehouse_swarm ${catkin_LIBRARIES})
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_warehouse_swarm.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+# Add gtest based cpp test target and link libraries
+catkin_add_gtest(warehouse_swarm_test 
+  test/main.cpp
+  test/test_swarm_master.cpp
 
-## Add folders to be run by python nosetests
+  src/swarm_master/assignment_designator.cpp
+  src/swarm_master/site.cpp
+  src/swarm_master/swarm_master.cpp
+)
+if(TARGET warehouse_swarm_test)
+  target_link_libraries(warehouse_swarm_test ${catkin_LIBRARIES})
+endif()
+
+# # Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

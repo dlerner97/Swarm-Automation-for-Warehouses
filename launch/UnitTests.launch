@@ -1,0 +1,10 @@
+<launch>
+
+    <node
+        name="warehouse_swarm_test"
+        pkg="warehouse_swarm"
+        type="warehouse_swarm_test"
+        output="screen"
+    />
+
+</launch>
