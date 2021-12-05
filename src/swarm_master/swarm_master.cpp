@@ -21,3 +21,11 @@ int SwarmMaster::add_robot_to_swarm(std::array<double, 2> pos_init) {
     robots_avail.push_back({id, pos_init});
     return id;
 }
+
+void SwarmMaster::assign_crates(std::vector<Crate> crates) {
+    int id;
+    if (assigned_site_id.empty()) id = 0;
+    else id = *(assigned_site_id.end()-1) + 1;
+    for (const auto& crate : crates)
+        sites.push_back({id, crate, weight_per_robot});
+}

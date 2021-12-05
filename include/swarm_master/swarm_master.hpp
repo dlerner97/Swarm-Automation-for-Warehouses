@@ -22,19 +22,14 @@
 
 class SwarmMaster {
  protected:
+   double weight_per_robot = 2;        // kg
    std::vector<int> assigned_ids{};
    std::vector<Robot> robots_avail{};
+   std::vector<int> assigned_site_id{};
    std::vector<Site> sites{};
-   std::queue<Task> task_queue;
  public:
    SwarmMaster(/* args */) {}
    ~SwarmMaster() {}
-
-   /**
-    * @brief Add task to task queue
-    * 
-    */
-   void add_to_task_queue(std::vector<Crate>);
 
    /**
     * @brief Add robot to swarm
@@ -43,6 +38,12 @@ class SwarmMaster {
     * @return int 
     */
    int add_robot_to_swarm(std::array<double, 2>);
+
+   /**
+    * @brief Add task to task queue
+    * 
+    */
+   void assign_crates(std::vector<Crate>);
 
    /**
     * @brief Assign all robots to designated crates
