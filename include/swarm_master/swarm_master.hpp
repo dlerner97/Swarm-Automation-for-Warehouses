@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <queue>
+#include <utility>
 #include "./site.hpp"
 #include "../structs/task.hpp"
 #include "../structs/crate.hpp"
@@ -22,13 +23,14 @@
 
 class SwarmMaster {
  protected:
-   double weight_per_robot = 2;        // kg
+   double weight_per_robot;            // kg
    std::vector<int> assigned_ids{};
    std::vector<Robot> robots_avail{};
    std::vector<int> assigned_site_id{};
    std::vector<Site> sites{};
  public:
-   SwarmMaster(/* args */) {}
+   SwarmMaster(double _weight_per_robot=2.0) :
+      weight_per_robot{_weight_per_robot} {}
    ~SwarmMaster() {}
 
    /**
@@ -67,4 +69,12 @@ class SwarmMaster {
     * @return false 
     */
    bool perform_next_task();
+
+   /**
+    * @brief Get avail robots
+    * 
+    * @return std::pair<std::vector<int>, std::vector<Robot>> 
+    */
+   std::pair<std::vector<int>, std::vector<Robot> > get_avail_robots();
+
 };

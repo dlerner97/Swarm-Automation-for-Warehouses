@@ -10,6 +10,7 @@
  */
 
 #include <vector>
+#include <utility>
 #include <stdexcept>
 #include "../../include/swarm_master/swarm_master.hpp"
 #include "../../include/swarm_master/assignment_designator.hpp"
@@ -67,4 +68,8 @@ std::vector<Assignment> SwarmMaster::assign_robots_to_crates() {
             assignments.push_back({designation.assigned_ids[i], designation.crate, along_crate[i]});
     }
     return assignments;
+}
+
+std::pair<std::vector<int>, std::vector<Robot> > SwarmMaster::get_avail_robots() {
+    return std::make_pair(assigned_ids, robots_avail);
 }
