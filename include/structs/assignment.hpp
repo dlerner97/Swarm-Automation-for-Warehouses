@@ -15,7 +15,7 @@
 #include <array>
 
 struct Assignment {
+    int robot_id;
     Crate crate;
     std::array<double, 2> pos_crate_frame;  // m
-    double height_off_ground;               // m
 };

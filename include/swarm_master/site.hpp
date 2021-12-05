@@ -34,6 +34,7 @@ bool operator<(const RobotDist& d1, const RobotDist& d2) {
 class Site {
  public:
     int site_id;
+    Crate crate{};
     int robots_required;
     std::array<double, 2> pos;
     std::vector<int> assigned_ids{};
@@ -44,11 +45,13 @@ class Site {
         robots_required{_robots_req},
         pos{_pos} {}
 
-    Site(int id, const Crate& crate, double weight_per_robot) :
+    Site(int id, const Crate& _crate, double weight_per_robot) :
             site_id{id},
-            pos{crate.base_footprint[0], crate.base_footprint[1]} {
-        double val = std::ceil(crate.mass/weight_per_robot);
+            pos{_crate.base_footprint[0], _crate.base_footprint[1]} {
+        double val = std::ceil(_crate.mass/weight_per_robot);
+        if (val < 2) val = 2;
         robots_required = static_cast<int>(val);
+        crate = _crate;
     }
 
     void populate_robot_dists(std::unordered_map<int, Robot>& robots);

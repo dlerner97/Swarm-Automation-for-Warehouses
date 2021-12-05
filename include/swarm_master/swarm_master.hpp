@@ -46,6 +46,14 @@ class SwarmMaster {
    void assign_crates(std::vector<Crate>);
 
    /**
+    * @brief Find the relative positions of each robot in the crate frame
+    * 
+    * @param site 
+    * @return std::vector<std::array<double, 2>> 
+    */
+   std::vector<std::array<double, 2>> assign_robots_along_crate(const Site& site);
+
+   /**
     * @brief Assign all robots to designated crates
     * 
     * @return std::vector<Assignment> 

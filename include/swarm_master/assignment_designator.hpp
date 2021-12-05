@@ -24,7 +24,7 @@ class AssignmentDesignator {
     std::unordered_map<int, Site> all_sites;
     std::unordered_map<int, Robot> all_robots;
  public:
-    AssignmentDesignator(std::vector<Site>& sites, std::vector<Robot> robots) {
+    AssignmentDesignator(std::vector<Site>& sites, std::vector<Robot>& robots) {
         for (const auto& robot : robots) {
             all_robots[robot.id] = robot;
         }
@@ -40,7 +40,7 @@ class AssignmentDesignator {
 
 class GrowingRadiusDesignator : public AssignmentDesignator {
  public:
-    GrowingRadiusDesignator(std::vector<Site>& sites, std::vector<Robot> robots) :
+    GrowingRadiusDesignator(std::vector<Site>& sites, std::vector<Robot>& robots) :
         AssignmentDesignator{sites, robots} {}
 
     SiteVec get_designations();
