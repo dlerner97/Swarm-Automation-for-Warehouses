@@ -16,6 +16,7 @@
 #include "../structs/task.hpp"
 #include "../structs/crate.hpp"
 #include "../structs/assignment.hpp"
+#include "./assignment_designator.hpp"
 
 class SwarmMaster {
  protected:
