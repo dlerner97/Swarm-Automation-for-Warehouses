@@ -45,7 +45,7 @@ class SwarmMaster {
   * @brief Assign crates as sites
   * 
   */
-  void assign_crates(std::vector<Crate>);
+  void assign_crate(Crate crate);
 
   /**
   * @brief Find the relative positions of each robot in the crate frame

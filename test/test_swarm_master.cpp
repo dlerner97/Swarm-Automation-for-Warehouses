@@ -33,20 +33,26 @@ TEST(SwarmMasterTests, TestAddRobotToSwarm) {
 
 TEST(SwarmMasterTests, TestAssignCrates) {
     SwarmMaster master(2.0);
-    std::vector<Crate> crates{};
-    crates.push_back({{1,2,3}, {4,5,6}, {3,4}, 6.2});
-    crates.push_back({{3,2,1}, {6,5,4}, {4,6}, 1});
-    crates.push_back({{3,2,1}, {6,5,4}, {4,6}, 5});
-    crates.push_back({{3,2,1}, {6,5,4}, {4,6}, 7.2});
-    master.assign_crates(crates);
+    Crate c1({1,2,3}, {4,5,6}, {3,4}, 6.2);
+    master.assign_crate(c1);
+    master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 1});
+    master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 5});
+    master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 7.2});
     const auto& sites = master.get_sites();
-    EXPECT_EQ(sites[0].crate.goal_pos, crates[0].goal_pos);
+    EXPECT_EQ(sites[0].crate.goal_pos, c1.goal_pos);
     EXPECT_EQ(sites[1].site_id, 1);
     EXPECT_TRUE(sites[2].assigned_ids.empty());
     EXPECT_EQ(sites[0].robots_required, 4);
     EXPECT_EQ(sites[1].robots_required, 2);
     EXPECT_EQ(sites[2].robots_required, 3);
     EXPECT_EQ(sites[3].robots_required, 4);
-    crates.push_back({{3,2,1}, {6,5,4}, {4,6}, 8.1});
-    EXPECT_ANY_THROW(master.assign_crates(crates));
+    EXPECT_ANY_THROW(master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 8.1}));
+}
+
+TEST(SwarmMasterTest, TestAssignRobotsToCrates) {
+    SwarmMaster master(2.0);
+    master.assign_crate({{1,2,3}, {4,5,6}, {3,4}, 6.2});
+    master.add_robot_to_swarm({1,4});
+
+    
 }

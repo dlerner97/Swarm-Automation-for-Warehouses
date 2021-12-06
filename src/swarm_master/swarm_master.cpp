@@ -24,16 +24,14 @@ int SwarmMaster::add_robot_to_swarm(std::array<double, 2> pos_init) {
     return id;
 }
 
-void SwarmMaster::assign_crates(std::vector<Crate> crates) {
+void SwarmMaster::assign_crate(Crate crate) {
     int id;
-    for (const auto& crate : crates) {
-        if (assigned_site_id.empty()) id = 0;
-        else id = *(assigned_site_id.end()-1) + 1;
-        if (crate.mass > 4 * weight_per_robot)
-            throw std::invalid_argument("Crate is too heavy for system!");
-        sites.push_back({id, crate, weight_per_robot});
-        assigned_site_id.push_back(id);
-    }
+    if (assigned_site_id.empty()) id = 0;
+    else id = *(assigned_site_id.end()-1) + 1;
+    if (crate.mass > 4 * weight_per_robot)
+        throw std::invalid_argument("Crate is too heavy for system!");
+    sites.push_back({id, crate, weight_per_robot});
+    assigned_site_id.push_back(id);
 }
 
 std::vector<std::array<double, 2>> SwarmMaster::assign_robots_along_crate(const Site& site) {
