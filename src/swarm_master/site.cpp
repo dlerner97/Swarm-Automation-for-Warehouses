@@ -24,7 +24,11 @@ void Site::populate_robot_dists(std::unordered_map<int, Robot>& robots) {
 }
 
 std::vector<RobotDist> Site::get_n_closest(int n) {
-    return std::vector<RobotDist>(dist_to_robots.begin(), dist_to_robots.end()+n);
+    if (n == -1)
+        return std::vector<RobotDist>(dist_to_robots.begin(), dist_to_robots.end());
+    else if (n >= dist_to_robots.size()) throw std::invalid_argument("Not enough robots");
+    else
+        return std::vector<RobotDist>(dist_to_robots.begin(), dist_to_robots.begin()+n);
 }
 
 std::vector<RobotDist> Site::find_all_lt_dist(double dist) {

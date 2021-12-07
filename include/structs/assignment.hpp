@@ -16,6 +16,7 @@
 
 struct Assignment {
     int robot_id;
+    int site_id;
     Crate crate;
     std::array<double, 2> pos_crate_frame;  // m
 };

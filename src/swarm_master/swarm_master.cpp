@@ -66,8 +66,9 @@ std::vector<Assignment> SwarmMaster::assign_robots_to_crates() {
     std::vector<Assignment> assignments;
     for (const auto& designation : *designations) {
         auto along_crate = assign_robots_along_crate(designation);
-        for (std::size_t i=0; i<designation.assigned_ids.size(); i++)            
-            assignments.push_back({designation.assigned_ids[i], designation.crate, along_crate[i]});
+        for (std::size_t i=0; i<designation.assigned_ids.size(); i++)
+            assignments.push_back({designation.assigned_ids[i], designation.site_id,
+                        designation.crate, along_crate[i]});
     }
     return assignments;
 }

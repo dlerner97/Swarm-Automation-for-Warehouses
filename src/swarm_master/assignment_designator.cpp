@@ -19,41 +19,25 @@
 
 GrowingRadiusDesignator::SiteVec GrowingRadiusDesignator::get_designations() {
     SiteVec ret = std::make_shared<std::vector<Site>>(std::vector<Site>{});
-    int total_robots_required{0};
-    std::map<int, std::vector<int>> used_id_map;
-    std::map<int, std::vector<RobotDist>> closest{};
-
-    int additive = 0;
-    bool first_iter{true};
-    while ((used_id_map.size() < total_robots_required) || first_iter) {
-        closest.clear();
-        used_id_map.clear();
-
-        for (auto& site_pair : all_sites) {
-            auto& site = site_pair.second;
-            site.populate_robot_dists(all_robots);
-            auto closest_few = site.get_n_closest(site.robots_required + additive);
-            for (auto& close : closest_few)
-                    used_id_map[close.robot_id].push_back(site.site_id);
-
-            closest[site.site_id] = closest_few;
-            if (first_iter)
-                total_robots_required += site.robots_required;
+    int robots_required{0};
+    std::unordered_map<int, int> used_id_map{};
+    for (auto& site_pair : all_sites) {
+        auto& site = site_pair.second;
+        site.populate_robot_dists(all_robots);
+        for (const auto& robot : site.get_n_closest(-1)) {
+            if (used_id_map.find(robot.robot_id) != used_id_map.end()) continue;
+            if (site.assigned_ids.size() == site.robots_required) break;
+            used_id_map[robot.robot_id] = site.site_id;
+            site.assigned_ids.push_back(robot.robot_id);
         }
-
-        additive++;
-
-        if (first_iter && (all_robots.size() < total_robots_required))
-            throw std::invalid_argument("Not enough robots to complete the task!");
-
-        first_iter = false;
+        if (site.assigned_ids.size() != site.robots_required)
+            throw std::length_error("Error finding robot assignments");
     }
 
     for (const auto& used_id : used_id_map) {
-        for (const auto& site_id : used_id.second) {
-            auto& site = all_sites.at(site_id);
-            if (site.assigned_ids.size() < site.robots_required)
-                all_sites.at(site_id).assigned_ids.push_back(used_id.first);
+        auto& site = all_sites.at(used_id.second);
+        if (site.assigned_ids.size() < site.robots_required) {
+            all_sites.at(used_id.second).assigned_ids.push_back(used_id.first);
         }
     }
     
