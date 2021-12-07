@@ -11,20 +11,24 @@
 
 #pragma once
 
-#include <ros.h>
+#include <ros/ros.h>
 #include <string>
 #include <array>
 #include <vector>
+#include <unordered_map>
 
 #include "warehouse_swarm/SwarmConnect.h"
 #include "./swarm_master.hpp"
 
 class RosSwarmMaster : public SwarmMaster {
  private:
+   ros::NodeHandle nh;
    ros::ServiceServer swarm_connect_server;
    ros::ServiceServer swarm_task_server;
-   std::vector<ros::Subscriber> all_pos_subscriber;
-   std::string swarm_task_server_topic_name;
+   std::unordered_map<int, ros::Subscriber> all_pos_subscriber;
+   std::unordered_map<int, ros::Publisher> all_task_publisher;
+   std::string swarm_task_server_topic_name_begin;
+   std::string swarm_task_server_topic_name_end;
    std::string swarm_connect_server_topic_name;
 
    /**
@@ -41,11 +45,13 @@ class RosSwarmMaster : public SwarmMaster {
                                warehouse_swarm::SwarmConnect::Response& resp);
 
  public:
-   RosSwarmMaster(/* args */) : swarm_connect_server_topic_name{"/swarm_connect"} {
-      ros::NodeHandle nh;
+   RosSwarmMaster(/* args */) :
+         swarm_connect_server_topic_name{"/swarm_connect"},
+         swarm_task_server_topic_name_begin{"robot_"},
+         swarm_task_server_topic_name_end{"/task"} {
+            
       swarm_connect_server = nh.advertiseService(
-         swarm_connect_server_topic_name, &RosSwarmMaster::swarm_connect_callback, this);
-      
+         swarm_connect_server_topic_name, &RosSwarmMaster::swarm_connect_callback, this);      
    }
    ~RosSwarmMaster() {}
 
