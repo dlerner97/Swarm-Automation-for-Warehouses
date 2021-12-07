@@ -68,7 +68,7 @@ class SwarmMaster {
    * 
    * @return std::vector<Task> 
    */
-  std::shared_ptr<std::vector<Task> > break_down_assignment(Assignment& assignment);
+  std::shared_ptr<std::vector<Task> > break_down_assignment(const Assignment& assignment);
 
   /**
   * @brief Grab next task from task queue and get it done.

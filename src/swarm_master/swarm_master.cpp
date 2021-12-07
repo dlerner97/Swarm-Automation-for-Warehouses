@@ -84,7 +84,7 @@ std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates()
     return assignments;
 }
 
-std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(Assignment& assignment) {
+std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(const Assignment& assignment) {
     std::shared_ptr<std::vector<Task>> ret;
     typedef std::unordered_map<std::string, double> commandDict;
     ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
