@@ -36,29 +36,38 @@ void SwarmMaster::assign_crate(Crate crate) {
     assigned_site_id.push_back(id);
 }
 
-std::vector<std::array<double, 2> > SwarmMaster::assign_robots_along_crate(const Site& site) {
+std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const Site& site) {
     int num_robots = site.assigned_ids.size();
-    std::vector<std::array<double, 2>> ret;
+    std::vector<std::array<double, 3>> ret;
     ret.reserve(num_robots);
     auto footprint = site.crate.base_footprint;
     auto bigger_half_footprint = (footprint[0] > footprint[1] ? footprint[0]/2.0 : footprint[1]/2.0);
     auto smaller_half_footprint = (footprint[0] < footprint[1] ? footprint[0]/2.0 : footprint[1]/2.0);
 
     if (num_robots == 2) {
-        ret.push_back({bigger_half_footprint, 0});
-        ret.push_back({-bigger_half_footprint, 0});
+        ret.push_back({bigger_half_footprint, 0, 180});
+        ret.push_back({-bigger_half_footprint, 0, 0});
     } else if (num_robots == 3) {
-        ret.push_back({bigger_half_footprint-0.5, smaller_half_footprint});
-        ret.push_back({bigger_half_footprint-0.5, -smaller_half_footprint});
-        ret.push_back({-bigger_half_footprint, 0});
+        ret.push_back({bigger_half_footprint-0.5, smaller_half_footprint, 270});
+        ret.push_back({bigger_half_footprint-0.5, -smaller_half_footprint, 90});
+        ret.push_back({-bigger_half_footprint, 0, 0});
     } else if (num_robots == 4) {
-        ret.push_back({bigger_half_footprint, 0});
-        ret.push_back({-bigger_half_footprint, 0});
-        ret.push_back({0, smaller_half_footprint});
-        ret.push_back({0, -smaller_half_footprint});
+        ret.push_back({bigger_half_footprint, 0, 180});
+        ret.push_back({-bigger_half_footprint, 0, 0});
+        ret.push_back({0, smaller_half_footprint, 270});
+        ret.push_back({0, -smaller_half_footprint, 90});
     } else {
         throw std::invalid_argument("There must be fewer than 4 robots. We cannot lift this crate!");
     }
+    if (footprint[1] > footprint[0]) {
+        for (auto& pos : ret) {
+            auto temp = pos[0];
+            pos[0] = pos[1];
+            pos[1] = temp;
+            pos[2] = (static_cast<int>(pos[2])+90)%360;
+        }
+    }
+
     return ret;
 }
 
@@ -80,23 +89,16 @@ std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(Assignmen
     typedef std::unordered_map<std::string, double> commandDict;
     ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
 
-    double crate_frame_x = assignment.pos_crate_frame[0];
-    double crate_frame_y = assignment.pos_crate_frame[0];
-    if (assignment.crate.base_footprint[1] > assignment.crate.base_footprint[0]) {
-        auto temp = crate_frame_x;
-        crate_frame_x = crate_frame_y;
-        crate_frame_y = temp;
-    }
-    auto toX_begin = assignment.crate.start_pos[0] + crate_frame_x;
-    auto toY_begin = assignment.crate.start_pos[1] + crate_frame_y;
+    auto toX_begin = assignment.crate.start_pos[0] + assignment.pos_crate_frame[0];
+    auto toY_begin = assignment.crate.start_pos[1] + assignment.pos_crate_frame[1];
 
-    ret->push_back({Task::Drive, commandDict{{"ToX", toX_begin}, {"ToY", toY_begin}}});
+    ret->push_back({Task::Drive, commandDict{{"ToX", toX_begin}, {"ToY", toY_begin}, {"ToTheta", assignment.pos_crate_frame[2]}}});
     ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]}}});
     ret->push_back({Task::Wait, commandDict{{"AssignmentID", assignment.site_id}}});
 
-    auto toX_end = assignment.crate.goal_pos[0] + crate_frame_x;
-    auto toY_end = assignment.crate.goal_pos[1] + crate_frame_y;
-    ret->push_back({Task::Drive, commandDict{{"ToX", toX_end}, {"ToY", toY_end}}});
+    auto toX_end = assignment.crate.goal_pos[0] + assignment.pos_crate_frame[0];
+    auto toY_end = assignment.crate.goal_pos[1] + assignment.pos_crate_frame[1];
+    ret->push_back({Task::Drive, commandDict{{"ToX", toX_end}, {"ToY", toY_end}, {"ToTheta", assignment.pos_crate_frame[2]}}});
     ret->push_back({Task::Wait, commandDict{{"AssignmentID", assignment.site_id}}});
     ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
     return ret;

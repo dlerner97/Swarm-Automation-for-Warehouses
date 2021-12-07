@@ -54,7 +54,7 @@ class SwarmMaster {
   * @param site 
   * @return std::vector<std::array<double, 2>> 
   */
-  std::vector<std::array<double, 2> > assign_robots_along_crate(const Site& site);
+  std::vector<std::array<double, 3> > assign_robots_along_crate(const Site& site);
 
   /**
   * @brief Assign all robots to designated crates
