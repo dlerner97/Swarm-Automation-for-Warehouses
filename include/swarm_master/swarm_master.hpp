@@ -71,6 +71,18 @@ class SwarmMaster {
   bool perform_next_task();
 
   /**
+   * @brief Clear crates from vect
+   * 
+   */
+  void clear_crates();
+
+  /**
+   * @brief Clear robots from vec
+   * 
+   */
+  void clear_robots();
+
+  /**
   * @brief Get avail robots
   * 
   * @return std::pair<std::vector<int>, std::vector<Robot>> 

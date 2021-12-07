@@ -73,6 +73,16 @@ std::vector<Assignment> SwarmMaster::assign_robots_to_crates() {
     return assignments;
 }
 
+void SwarmMaster::clear_crates() {
+    sites.clear();
+    assigned_site_id.clear();
+}
+
+void SwarmMaster::clear_robots() {
+    robots_avail.clear();
+    assigned_ids.clear();
+}
+
 const std::pair<std::vector<int>, std::vector<Robot> > SwarmMaster::get_avail_robots() {
     return std::make_pair(assigned_ids, robots_avail);
 }
