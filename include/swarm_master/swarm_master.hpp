@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 #include <queue>
 #include <utility>
@@ -53,14 +54,21 @@ class SwarmMaster {
   * @param site 
   * @return std::vector<std::array<double, 2>> 
   */
-  std::vector<std::array<double, 2>> assign_robots_along_crate(const Site& site);
+  std::vector<std::array<double, 2> > assign_robots_along_crate(const Site& site);
 
   /**
   * @brief Assign all robots to designated crates
   * 
   * @return std::vector<Assignment> 
   */
-  std::vector<Assignment> assign_robots_to_crates();
+  std::shared_ptr<std::vector<Assignment> > assign_robots_to_crates();
+
+  /**
+   * @brief Break down assignment into list of tasks
+   * 
+   * @return std::vector<Task> 
+   */
+  std::shared_ptr<std::vector<Task> > break_down_assignment(Assignment& assignment);
 
   /**
   * @brief Grab next task from task queue and get it done.

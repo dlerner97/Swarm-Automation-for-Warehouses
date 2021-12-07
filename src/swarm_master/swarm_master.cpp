@@ -9,6 +9,8 @@
  * 
  */
 
+#include <string>
+#include <memory>
 #include <vector>
 #include <utility>
 #include <stdexcept>
@@ -34,7 +36,7 @@ void SwarmMaster::assign_crate(Crate crate) {
     assigned_site_id.push_back(id);
 }
 
-std::vector<std::array<double, 2>> SwarmMaster::assign_robots_along_crate(const Site& site) {
+std::vector<std::array<double, 2> > SwarmMaster::assign_robots_along_crate(const Site& site) {
     int num_robots = site.assigned_ids.size();
     std::vector<std::array<double, 2>> ret;
     ret.reserve(num_robots);
@@ -60,17 +62,44 @@ std::vector<std::array<double, 2>> SwarmMaster::assign_robots_along_crate(const 
     return ret;
 }
 
-std::vector<Assignment> SwarmMaster::assign_robots_to_crates() {
+std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates() {
     GrowingRadiusDesignator designator(sites, robots_avail);
     auto designations = designator.get_designations();
-    std::vector<Assignment> assignments;
+    std::shared_ptr<std::vector<Assignment> > assignments;
     for (const auto& designation : *designations) {
         auto along_crate = assign_robots_along_crate(designation);
         for (std::size_t i=0; i<designation.assigned_ids.size(); i++)
-            assignments.push_back({designation.assigned_ids[i], designation.site_id,
+            assignments->push_back({designation.assigned_ids[i], designation.site_id,
                         designation.crate, along_crate[i]});
     }
     return assignments;
+}
+
+std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(Assignment& assignment) {
+    std::shared_ptr<std::vector<Task>> ret;
+    typedef std::unordered_map<std::string, double> commandDict;
+    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
+
+    double crate_frame_x = assignment.pos_crate_frame[0];
+    double crate_frame_y = assignment.pos_crate_frame[0];
+    if (assignment.crate.base_footprint[1] > assignment.crate.base_footprint[0]) {
+        auto temp = crate_frame_x;
+        crate_frame_x = crate_frame_y;
+        crate_frame_y = temp;
+    }
+    auto toX_begin = assignment.crate.start_pos[0] + crate_frame_x;
+    auto toY_begin = assignment.crate.start_pos[1] + crate_frame_y;
+
+    ret->push_back({Task::Drive, commandDict{{"ToX", toX_begin}, {"ToY", toY_begin}}});
+    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]}}});
+    ret->push_back({Task::Wait, commandDict{{"AssignmentID", assignment.site_id}}});
+
+    auto toX_end = assignment.crate.goal_pos[0] + crate_frame_x;
+    auto toY_end = assignment.crate.goal_pos[1] + crate_frame_y;
+    ret->push_back({Task::Drive, commandDict{{"ToX", toX_end}, {"ToY", toY_end}}});
+    ret->push_back({Task::Wait, commandDict{{"AssignmentID", assignment.site_id}}});
+    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
+    return ret;
 }
 
 void SwarmMaster::clear_crates() {

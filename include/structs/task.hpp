@@ -18,9 +18,15 @@ struct Task {
     enum taskType {
         Drive,
         MvPlatform,
+        Wait,
     };
 
     taskType task;
-    std::unordered_map<std::string, double> num_param_dict{};
+    std::unordered_map<std::string, double> num_param_dict;
     std::unordered_map<std::string, std::string> command_param_dict{};
+
+    Task(taskType task_type, std::unordered_map<std::string, double> command_dict) {
+        task = task_type;
+        num_param_dict = command_dict;
+    }
 };
