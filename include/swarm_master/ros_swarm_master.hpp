@@ -27,8 +27,8 @@ class RosSwarmMaster : public SwarmMaster {
    ros::ServiceServer swarm_task_server;
    std::unordered_map<int, ros::Subscriber> all_pos_subscriber;
    std::unordered_map<int, ros::Publisher> all_task_publisher;
-   std::string swarm_task_server_topic_name_begin;
-   std::string swarm_task_server_topic_name_end;
+   std::string robot_namespace_begin;
+   std::string task_server_name;
    std::string swarm_connect_server_topic_name;
 
    /**
@@ -47,8 +47,8 @@ class RosSwarmMaster : public SwarmMaster {
  public:
    RosSwarmMaster(/* args */) :
          swarm_connect_server_topic_name{"/swarm_connect"},
-         swarm_task_server_topic_name_begin{"robot_"},
-         swarm_task_server_topic_name_end{"/task"} {
+         robot_namespace_begin{"robot_"},
+         task_server_name{"/task"} {
             
       swarm_connect_server = nh.advertiseService(
          swarm_connect_server_topic_name, &RosSwarmMaster::swarm_connect_callback, this);      
