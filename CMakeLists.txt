@@ -141,7 +141,8 @@ add_executable(warehouse_swarm
   src/swarm_master/assignment_designator.cpp
   src/swarm_master/site.cpp
   src/swarm_master/swarm_master.cpp
-  src/main.cpp
+  scr/swarm_master/ros_swarm_master.cpp
+  src/swarm_master/main.cpp
 )
 target_link_libraries(warehouse_swarm ${catkin_LIBRARIES})
 
