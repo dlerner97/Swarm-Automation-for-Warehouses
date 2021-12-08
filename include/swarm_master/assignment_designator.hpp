@@ -21,18 +21,13 @@
 class AssignmentDesignator {
  protected:
     typedef std::shared_ptr<std::vector<Site>> SiteVec;
-    std::unordered_map<int, Site> all_sites;
-    std::unordered_map<int, Robot> all_robots;
+    std::unordered_map<int, Site>& all_sites;
+    std::unordered_map<int, Robot>& all_robots;
  public:
-    AssignmentDesignator(std::vector<Site>& sites, std::vector<Robot>& robots) {
-        for (const auto& robot : robots) {
-            all_robots.emplace(robot.id, robot);
-        }
+    AssignmentDesignator(std::unordered_map<int, Site>& sites, std::unordered_map<int, Robot>& robots) :
+            all_sites{sites},
+            all_robots{robots} {}
 
-        for (const auto& site : sites) {
-            all_sites.emplace(site.site_id, site);
-        }
-    }
     ~AssignmentDesignator() {}
 
     virtual SiteVec get_designations() = 0;
@@ -40,7 +35,7 @@ class AssignmentDesignator {
 
 class GrowingRadiusDesignator : public AssignmentDesignator {
  public:
-    GrowingRadiusDesignator(std::vector<Site>& sites, std::vector<Robot>& robots) :
+    GrowingRadiusDesignator(std::unordered_map<int, Site>& sites, std::unordered_map<int, Robot>& robots) :
         AssignmentDesignator{sites, robots} {}
 
     SiteVec get_designations();

@@ -22,7 +22,7 @@ int SwarmMaster::add_robot_to_swarm(std::array<double, 2> pos_init) {
     if (assigned_ids.empty()) id = 0;
     else id = *(assigned_ids.end()-1) + 1;
     assigned_ids.push_back(id);
-    robots_avail.push_back({id, pos_init});
+    robots_avail.emplace(id, Robot(id, pos_init));
     return id;
 }
 
@@ -32,7 +32,8 @@ void SwarmMaster::assign_crate(Crate crate) {
     else id = *(assigned_site_id.end()-1) + 1;
     if (crate.mass > 4 * weight_per_robot)
         throw std::invalid_argument("Crate is too heavy for system!");
-    sites.push_back({id, crate, weight_per_robot});
+    sites.emplace(id, Site(id, crate, weight_per_robot));
+    robots_at_site_waiting.insert({id, {}});
     assigned_site_id.push_back(id);
 }
 
@@ -104,6 +105,15 @@ std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(const Ass
     return ret;
 }
 
+bool SwarmMaster::all_robots_at_site_waiting(int robot_id, int site_id) {
+    robots_at_site_waiting.at(site_id).insert(robot_id);
+    if (robots_at_site_waiting.at(site_id).size() == sites.at(site_id).robots_required) {
+        robots_at_site_waiting.at(site_id).clear();
+        return true;
+    }
+    return false;
+}
+
 void SwarmMaster::clear_crates() {
     sites.clear();
     assigned_site_id.clear();
@@ -114,10 +124,10 @@ void SwarmMaster::clear_robots() {
     assigned_ids.clear();
 }
 
-const std::pair<std::vector<int>, std::vector<Robot> > SwarmMaster::get_avail_robots() {
-    return std::make_pair(assigned_ids, robots_avail);
+const std::unordered_map<int, Robot> SwarmMaster::get_avail_robots() {
+    return robots_avail;
 }
 
-const std::vector<Site>& SwarmMaster::get_sites() {
+const std::unordered_map<int, Site>& SwarmMaster::get_sites() {
     return sites;
 }

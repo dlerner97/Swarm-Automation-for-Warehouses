@@ -11,10 +11,12 @@
 
 #pragma once
 
+#include <set>
 #include <memory>
 #include <vector>
 #include <queue>
 #include <utility>
+#include <unordered_map>
 #include "./site.hpp"
 #include "../structs/task.hpp"
 #include "../structs/crate.hpp"
@@ -26,9 +28,10 @@ class SwarmMaster {
  protected:
   double weight_per_robot;            // kg
   std::vector<int> assigned_ids{};
-  std::vector<Robot> robots_avail{};
+  std::unordered_map<int, Robot> robots_avail{};
   std::vector<int> assigned_site_id{};
-  std::vector<Site> sites{};
+  std::unordered_map<int, Site> sites{};
+  std::unordered_map<int, std::set<int>> robots_at_site_waiting;
  public:
   SwarmMaster(double _weight_per_robot=2.0) :
     weight_per_robot{_weight_per_robot} {}
@@ -71,6 +74,16 @@ class SwarmMaster {
   std::shared_ptr<std::vector<Task> > break_down_assignment(const Assignment& assignment);
 
   /**
+   * @brief Check if all robots have signaled that they are waiting
+   * 
+   * @param robot_id 
+   * @param site_id 
+   * @return true 
+   * @return false 
+   */
+  bool all_robots_at_site_waiting(int robot_id, int site_id);
+
+  /**
   * @brief Grab next task from task queue and get it done.
   * 
   * @return true 
@@ -95,12 +108,12 @@ class SwarmMaster {
   * 
   * @return std::pair<std::vector<int>, std::vector<Robot>> 
   */
-  const std::pair<std::vector<int>, std::vector<Robot> > get_avail_robots();
+  const std::unordered_map<int, Robot> get_avail_robots();
 
   /**
   * @brief Get assigned sites
   * 
   * @return const std::vector<Site>&
   */
-  const std::vector<Site>& get_sites();
+  const std::unordered_map<int, Site>& get_sites();
 };
