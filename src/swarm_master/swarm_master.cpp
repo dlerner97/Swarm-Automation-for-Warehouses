@@ -26,7 +26,7 @@ int SwarmMaster::add_robot_to_swarm(std::array<double, 2> pos_init) {
     return id;
 }
 
-int SwarmMaster::assign_crate(Crate crate) {
+int SwarmMaster::add_crate_to_system(Crate crate) {
     int id;
     if (assigned_site_id.empty()) id = 0;
     else id = *(assigned_site_id.end()-1) + 1;

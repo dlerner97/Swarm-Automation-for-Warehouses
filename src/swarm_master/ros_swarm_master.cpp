@@ -34,7 +34,7 @@ void RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robo
 }
 
 void RosSwarmMaster::get_task_callback(warehouse_swarm::Crate::ConstPtr& crate) {
-    int site_id = master.assign_crate(
+    int site_id = master.add_crate_to_system(
         Crate({crate->start_pos.x, crate->start_pos.y, crate->start_pos.z},
               {crate->goal_pos.x, crate->goal_pos.y, crate->goal_pos.z},
               {crate->x_len, crate->y_len}, crate->mass));

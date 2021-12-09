@@ -34,10 +34,10 @@ TEST(SwarmMasterTests, TestAddRobotToSwarm) {
 TEST(SwarmMasterTests, TestAssignCrates) {
     SwarmMaster master(2.0);
     Crate c1({1,2,3}, {4,5,6}, {3,4}, 6.2);
-    master.assign_crate(c1);
-    master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 1});
-    master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 5});
-    master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 7.2});
+    master.add_crate_to_system(c1);
+    master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 1});
+    master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 5});
+    master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 7.2});
     const auto& sites = master.get_sites();
     EXPECT_EQ(sites[0].crate.goal_pos, c1.goal_pos);
     EXPECT_EQ(sites[1].site_id, 1);
@@ -46,20 +46,20 @@ TEST(SwarmMasterTests, TestAssignCrates) {
     EXPECT_EQ(sites[1].robots_required, 2);
     EXPECT_EQ(sites[2].robots_required, 3);
     EXPECT_EQ(sites[3].robots_required, 4);
-    EXPECT_ANY_THROW(master.assign_crate({{3,2,1}, {6,5,4}, {4,6}, 8.1}));
+    EXPECT_ANY_THROW(master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 8.1}));
 }
 
 TEST(SwarmMasterTest, TestNotEnoughRobots) {
     SwarmMaster master(2.0);
-    master.assign_crate({{1,2,3}, {4,5,6}, {3,4}, 5.8});
+    master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 5.8});
     master.add_robot_to_swarm({1,4});
     EXPECT_ANY_THROW(master.assign_robots_to_crates());
 }
 
 TEST(SwarmMasterTest, TestAssignRobotsToCrates) {
     SwarmMaster master(2.0);
-    master.assign_crate({{1,2,3}, {4,5,6}, {3,4}, 5.8});
-    master.assign_crate({{3,2,1}, {6,5,4}, {6,4}, 1});
+    master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 5.8});
+    master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1});
     master.add_robot_to_swarm({1,4});
     master.add_robot_to_swarm({3,2});
     master.add_robot_to_swarm({2,3});

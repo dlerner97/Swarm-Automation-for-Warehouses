@@ -9,10 +9,12 @@
  * 
  */
 
+#include <ros/ros.h>
 #include "../../include/swarm_master/ros_swarm_master.hpp"
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "swarmMaster");
+    ros::init(argc, argv, "swarm_master");
     RosSwarmMaster master;
+    ros::Duration(10).sleep();
     return 0;
 }
