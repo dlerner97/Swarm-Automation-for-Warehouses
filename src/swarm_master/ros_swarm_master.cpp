@@ -21,22 +21,23 @@
 bool RosSwarmMaster::swarm_connect_callback(
         warehouse_swarm::SwarmConnect::Request& req,
         warehouse_swarm::SwarmConnect::Response& resp) {
-    resp.id = add_robot_to_swarm({req.x, req.y});
+    resp.id = master.add_robot_to_swarm({req.x, req.y});
     all_task_publisher[resp.id] = nh.advertise<warehouse_swarm::RobotTask>(
         "robot_" + std::to_string(resp.id) + "/task", 10);
     return true;
 }
 
 void RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id) {
-    auto all_waiting_AND_site = all_robots_at_site_waiting(robot_id->data);
+    auto all_waiting_AND_site = master.all_robots_at_site_waiting(robot_id->data);
     if (all_waiting_AND_site.first)
         all_site_ready_pub.at(all_waiting_AND_site.second).publish(std_msgs::Empty());
 }
 
 void RosSwarmMaster::get_task_callback(warehouse_swarm::Crate::ConstPtr& crate) {
-    int site_id = assign_crate(Crate({crate->start_pos.x, crate->start_pos.y, crate->start_pos.z},
-                                     {crate->goal_pos.x, crate->goal_pos.y, crate->goal_pos.z},
-                                     {crate->x_len, crate->y_len}, crate->mass));
+    int site_id = master.assign_crate(
+        Crate({crate->start_pos.x, crate->start_pos.y, crate->start_pos.z},
+              {crate->goal_pos.x, crate->goal_pos.y, crate->goal_pos.z},
+              {crate->x_len, crate->y_len}, crate->mass));
 
     const std::string prefix = "site_" + std::to_string(site_id);
     all_site_ready_pub[site_id] = nh.advertise<std_msgs::Empty>(prefix + "/ready", 1);
@@ -45,9 +46,9 @@ void RosSwarmMaster::get_task_callback(warehouse_swarm::Crate::ConstPtr& crate) 
 }
 
 void RosSwarmMaster::assign_robots() {
-    auto assignments = assign_robots_to_crates();
+    auto assignments = master.assign_robots_to_crates();
     for (const auto& assignment : *assignments) {
-        auto robot_tasks = break_down_assignment(assignment);
+        auto robot_tasks = master.break_down_assignment(assignment);
         for (const auto& task : *robot_tasks) {
             warehouse_swarm::RobotTask task_msg;
             if (task.task == task.Drive) {
