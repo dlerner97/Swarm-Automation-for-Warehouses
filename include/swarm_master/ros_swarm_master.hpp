@@ -13,6 +13,7 @@
 
 #include <ros/ros.h>
 #include <std_msgs/UInt16.h>
+#include <std_srvs/Empty.h>
 #include <string>
 #include <array>
 #include <vector>
@@ -26,6 +27,7 @@ class RosSwarmMaster {
  private:
   SwarmMaster master;  
   ros::NodeHandle nh;
+  ros::ServiceServer swarm_reset_server;
   ros::ServiceServer swarm_connect_server;
   ros::Subscriber swarm_task_subscriber;
 
@@ -51,6 +53,13 @@ class RosSwarmMaster {
                               warehouse_swarm::SwarmConnect::Response& resp);
 
   /**
+    * @brief Swarm connect callback function for swarm connect service server
+    * 
+    */
+  bool swarm_reset_callback(std_srvs::Empty::Request&,
+                            std_srvs::Empty::Response&);
+
+  /**
     * @brief Robot waiting topic callback
     * 
     * @param robot_id 
@@ -61,6 +70,8 @@ class RosSwarmMaster {
   RosSwarmMaster(double _weight_per_robot=2.0) : 
           master{_weight_per_robot} {
       ROS_INFO_STREAM("Spinning up RosSwarmMaster.");
+      swarm_reset_server = nh.advertiseService(
+        "swarm_reset", &RosSwarmMaster::swarm_reset_callback, this);
       swarm_connect_server = nh.advertiseService(
         "swarm_connect", &RosSwarmMaster::swarm_connect_callback, this);
       swarm_task_subscriber = nh.subscribe("payload_details", 100,
@@ -75,4 +86,6 @@ class RosSwarmMaster {
     * 
     */
   void assign_robots();
+
+
 };

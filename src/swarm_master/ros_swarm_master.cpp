@@ -13,6 +13,7 @@
 #include <string>
 #include <std_msgs/UInt16.h>
 #include <std_msgs/Empty.h>
+#include <std_srvs/Empty.h>
 #include <ros/ros.h>
 #include "warehouse_swarm/Crate.h"
 #include "warehouse_swarm/RobotTask.h"
@@ -25,6 +26,12 @@ bool RosSwarmMaster::swarm_connect_callback(
     all_task_publisher[resp.id] = nh.advertise<warehouse_swarm::RobotTask>(
         "robot_" + std::to_string(resp.id) + "/task", 10);
     return true;
+}
+
+bool RosSwarmMaster::swarm_reset_callback(std_srvs::Empty::Request&,
+                                          std_srvs::Empty::Response&) {
+    ROS_INFO_STREAM("RESETTING SWARM");
+    master.reset_swarm();
 }
 
 void RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id) {
