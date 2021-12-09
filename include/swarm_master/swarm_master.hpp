@@ -28,8 +28,8 @@ class SwarmMaster {
  protected:
   double weight_per_robot;            // kg
   std::vector<int> assigned_ids{};
-  std::unordered_map<int, Robot> robots_avail{};
   std::vector<int> assigned_site_id{};
+  std::unordered_map<int, Robot> robots_avail{};
   std::unordered_map<int, Site> sites{};
   std::unordered_map<int, std::set<int>> robots_at_site_waiting;
  public:
@@ -81,7 +81,7 @@ class SwarmMaster {
    * @return true 
    * @return false 
    */
-  bool all_robots_at_site_waiting(int robot_id, int site_id);
+  std::pair<bool, int> all_robots_at_site_waiting(int robot_id);
 
   /**
   * @brief Grab next task from task queue and get it done.

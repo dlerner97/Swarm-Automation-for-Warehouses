@@ -78,9 +78,12 @@ std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates()
     std::shared_ptr<std::vector<Assignment> > assignments;
     for (const auto& designation : *designations) {
         auto along_crate = assign_robots_along_crate(designation);
-        for (std::size_t i=0; i<designation.assigned_ids.size(); i++)
-            assignments->push_back({designation.assigned_ids[i], designation.site_id,
+        for (std::size_t i=0; i<designation.assigned_ids.size(); i++) {
+            int robot_id = designation.assigned_ids[i];
+            robots_avail.at(robot_id).assigned_site = designation.site_id;
+            assignments->push_back({robot_id, designation.site_id,
                         designation.crate, along_crate[i]});
+        }
     }
     return assignments;
 }
@@ -105,13 +108,14 @@ std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(const Ass
     return ret;
 }
 
-bool SwarmMaster::all_robots_at_site_waiting(int robot_id, int site_id) {
+std::pair<bool, int> SwarmMaster::all_robots_at_site_waiting(int robot_id) {
+    int site_id = robots_avail.at(robot_id).assigned_site;
     robots_at_site_waiting.at(site_id).insert(robot_id);
     if (robots_at_site_waiting.at(site_id).size() == sites.at(site_id).robots_required) {
         robots_at_site_waiting.at(site_id).clear();
-        return true;
+        return std::make_pair(true, site_id);
     }
-    return false;
+    return std::make_pair(false, site_id);
 }
 
 void SwarmMaster::clear_crates() {

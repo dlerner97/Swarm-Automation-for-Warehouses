@@ -15,7 +15,7 @@
 struct Robot {
     int id;
     std::array<double, 2> pos;
-    bool assigned = false;
+    int assigned_site;
     Robot(int _id, std::array<double, 2> _pos) {
         this->id = _id;
         this->pos = _pos;
@@ -24,6 +24,6 @@ struct Robot {
     Robot(const Robot& robot) {
         this->id = robot.id;
         this->pos = robot.pos;
-        this->assigned = robot.assigned;
+        this->assigned_site = robot.assigned_site;
     }
 };

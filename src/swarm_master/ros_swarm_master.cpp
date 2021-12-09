@@ -11,6 +11,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <std_msgs/UInt16.h>
+#include <std_msgs/Empty.h>
 #include <ros/ros.h>
 #include "warehouse_swarm/RobotTask.h"
 #include "../../include/swarm_master/ros_swarm_master.hpp"
@@ -22,6 +24,12 @@ bool RosSwarmMaster::swarm_connect_callback(
     all_task_publisher[resp.id] = nh.advertise<warehouse_swarm::RobotTask>(
         robot_namespace_begin + std::to_string(resp.id) + task_server_name, 10);
     return true;
+}
+
+bool RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id) {
+    auto all_waiting_AND_site = all_robots_at_site_waiting(robot_id->data);
+    if (all_waiting_AND_site.first)
+        all_site_ready_pub.at(all_waiting_AND_site.second).publish(std_msgs::Empty());
 }
 
 bool RosSwarmMaster::assign_robots() {

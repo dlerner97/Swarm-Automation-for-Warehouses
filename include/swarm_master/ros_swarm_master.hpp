@@ -12,6 +12,7 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <std_msgs/UInt16.h>
 #include <string>
 #include <array>
 #include <vector>
@@ -25,11 +26,15 @@ class RosSwarmMaster : public SwarmMaster {
    ros::NodeHandle nh;
    ros::ServiceServer swarm_connect_server;
    ros::ServiceServer swarm_task_server;
-   std::unordered_map<int, ros::Subscriber> all_pos_subscriber;
-   std::unordered_map<int, ros::Publisher> all_task_publisher;
+
    std::string robot_namespace_begin;
    std::string task_server_name;
    std::string swarm_connect_server_topic_name;
+
+   std::unordered_map<int, ros::Subscriber> all_pos_subscriber;
+   std::unordered_map<int, ros::Publisher> all_task_publisher;
+   std::unordered_map<int, ros::Publisher> all_site_ready_pub;
+   std::unordered_map<int, ros::Subscriber> robot_site_waiting_pub;
 
    /**
     * @brief Get task callback function for swarm task service server
@@ -44,10 +49,19 @@ class RosSwarmMaster : public SwarmMaster {
    bool swarm_connect_callback(warehouse_swarm::SwarmConnect::Request& req,
                                warehouse_swarm::SwarmConnect::Response& resp);
 
+   /**
+    * @brief Robot waiting topic callback
+    * 
+    * @param robot_id 
+    * @return true 
+    * @return false 
+    */
+   bool get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id);
+
  public:
    RosSwarmMaster(/* args */) :
          swarm_connect_server_topic_name{"/swarm_connect"},
-         robot_namespace_begin{"robot_"},
+         robot_namespace_begin{"/robot_"},
          task_server_name{"/task"} {
             
       swarm_connect_server = nh.advertiseService(
