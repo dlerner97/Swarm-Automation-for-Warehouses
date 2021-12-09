@@ -14,6 +14,7 @@
 #include <std_msgs/UInt16.h>
 #include <std_msgs/Empty.h>
 #include <ros/ros.h>
+#include "warehouse_swarm/Crate.h"
 #include "warehouse_swarm/RobotTask.h"
 #include "../../include/swarm_master/ros_swarm_master.hpp"
 
@@ -22,15 +23,25 @@ bool RosSwarmMaster::swarm_connect_callback(
         warehouse_swarm::SwarmConnect::Response& resp) {
     resp.id = add_robot_to_swarm({req.x, req.y});
     all_task_publisher[resp.id] = nh.advertise<warehouse_swarm::RobotTask>(
-        robot_namespace_begin + std::to_string(resp.id) + task_server_name, 10);
+        "robot_" + std::to_string(resp.id) + "/task", 10);
     return true;
 }
 
-bool RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id) {
+void RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id) {
     auto all_waiting_AND_site = all_robots_at_site_waiting(robot_id->data);
     if (all_waiting_AND_site.first)
         all_site_ready_pub.at(all_waiting_AND_site.second).publish(std_msgs::Empty());
-    return true;
+}
+
+void RosSwarmMaster::get_task_callback(warehouse_swarm::Crate::ConstPtr& crate) {
+    int site_id = assign_crate(Crate({crate->start_pos.x, crate->start_pos.y, crate->start_pos.z},
+                                     {crate->goal_pos.x, crate->goal_pos.y, crate->goal_pos.z},
+                                     {crate->x_len, crate->y_len}, crate->mass));
+
+    const std::string prefix = "site_" + std::to_string(site_id);
+    all_site_ready_pub[site_id] = nh.advertise<std_msgs::Empty>(prefix + "/ready", 1);
+    robot_site_waiting_pub[site_id] = nh.subscribe(prefix + "/waiting", 10,
+        &RosSwarmMaster::get_robot_waiting_callback, this);
 }
 
 void RosSwarmMaster::assign_robots() {

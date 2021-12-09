@@ -18,6 +18,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include "warehouse_swarm/Crate.h"
 #include "warehouse_swarm/SwarmConnect.h"
 #include "./swarm_master.hpp"
 
@@ -25,7 +26,7 @@ class RosSwarmMaster : public SwarmMaster {
  private:
    ros::NodeHandle nh;
    ros::ServiceServer swarm_connect_server;
-   ros::ServiceServer swarm_task_server;
+   ros::Subscriber swarm_task_subscriber;
 
    std::string robot_namespace_begin;
    std::string task_server_name;
@@ -39,7 +40,7 @@ class RosSwarmMaster : public SwarmMaster {
     * @brief Get task callback function for swarm task service server
     * 
     */
-   void get_task_callback(/* Not sure what this is yet. */);
+   void get_task_callback(warehouse_swarm::Crate::ConstPtr& crate);
 
    /**
     * @brief Swarm connect callback function for swarm connect service server
@@ -52,20 +53,20 @@ class RosSwarmMaster : public SwarmMaster {
     * @brief Robot waiting topic callback
     * 
     * @param robot_id 
-    * @return true 
-    * @return false 
     */
-   bool get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id);
+   void get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id);
 
  public:
-   RosSwarmMaster(/* args */) :
-         robot_namespace_begin{"robot_"},
-         task_server_name{"/task"} {
-            
+   RosSwarmMaster(/* args */) {
+      ROS_INFO_STREAM("Spinning up RosSwarmMaster.");
       swarm_connect_server = nh.advertiseService(
-         "swarm_connect", &RosSwarmMaster::swarm_connect_callback, this);      
+         "swarm_connect", &RosSwarmMaster::swarm_connect_callback, this);
+      swarm_task_subscriber = nh.subscribe("payload_details", 100,
+          &RosSwarmMaster::get_task_callback, this);
    }
-   ~RosSwarmMaster() {}
+   ~RosSwarmMaster() {
+      ROS_INFO_STREAM("Shutting down RosSwarmMaster.");
+   }
 
    /**
     * @brief Call SwarmMaster assign_robots_to_crate

@@ -26,7 +26,7 @@ int SwarmMaster::add_robot_to_swarm(std::array<double, 2> pos_init) {
     return id;
 }
 
-void SwarmMaster::assign_crate(Crate crate) {
+int SwarmMaster::assign_crate(Crate crate) {
     int id;
     if (assigned_site_id.empty()) id = 0;
     else id = *(assigned_site_id.end()-1) + 1;
@@ -35,6 +35,7 @@ void SwarmMaster::assign_crate(Crate crate) {
     sites.emplace(id, Site(id, crate, weight_per_robot));
     robots_at_site_waiting.insert({id, {}});
     assigned_site_id.push_back(id);
+    return id;
 }
 
 std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const Site& site) {
