@@ -30,9 +30,10 @@ bool RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robo
     auto all_waiting_AND_site = all_robots_at_site_waiting(robot_id->data);
     if (all_waiting_AND_site.first)
         all_site_ready_pub.at(all_waiting_AND_site.second).publish(std_msgs::Empty());
+    return true;
 }
 
-bool RosSwarmMaster::assign_robots() {
+void RosSwarmMaster::assign_robots() {
     auto assignments = assign_robots_to_crates();
     for (const auto& assignment : *assignments) {
         auto robot_tasks = break_down_assignment(assignment);

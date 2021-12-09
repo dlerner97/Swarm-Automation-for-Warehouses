@@ -29,7 +29,6 @@ class RosSwarmMaster : public SwarmMaster {
 
    std::string robot_namespace_begin;
    std::string task_server_name;
-   std::string swarm_connect_server_topic_name;
 
    std::unordered_map<int, ros::Subscriber> all_pos_subscriber;
    std::unordered_map<int, ros::Publisher> all_task_publisher;
@@ -60,20 +59,17 @@ class RosSwarmMaster : public SwarmMaster {
 
  public:
    RosSwarmMaster(/* args */) :
-         swarm_connect_server_topic_name{"/swarm_connect"},
-         robot_namespace_begin{"/robot_"},
+         robot_namespace_begin{"robot_"},
          task_server_name{"/task"} {
             
       swarm_connect_server = nh.advertiseService(
-         swarm_connect_server_topic_name, &RosSwarmMaster::swarm_connect_callback, this);      
+         "swarm_connect", &RosSwarmMaster::swarm_connect_callback, this);      
    }
    ~RosSwarmMaster() {}
 
    /**
     * @brief Call SwarmMaster assign_robots_to_crate
     * 
-    * @return true
-    * @return false 
     */
-   bool assign_robots();
+   void assign_robots();
 };
