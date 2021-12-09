@@ -10,6 +10,7 @@ project(warehouse_swarm)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
   message_generation
 )
 
@@ -50,6 +51,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   RobotTask.msg
+  Crate.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -69,6 +71,7 @@ add_service_files(
 generate_messages(
   DEPENDENCIES
   std_msgs
+  geometry_msgs
 )
 
 ################################################
@@ -103,7 +106,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include/structs include/swarm_master include/swarm_worker include/task_orchestrator
   LIBRARIES warehouse_swarm
-  CATKIN_DEPENDS roscpp std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs message_runtime
   DEPENDS system_lib
 )
 
