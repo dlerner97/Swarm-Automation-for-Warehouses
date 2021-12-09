@@ -40,6 +40,6 @@ class TaskOrchestrator {
      * @return true 
      * @return false 
      */
-    bool publish_full_task_list();
+    bool publish_full_task_list(std::vector<Crate>& crates);
 };
 
