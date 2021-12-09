@@ -25,13 +25,28 @@
 #include "./assignment_designator.hpp"
 
 class SwarmMaster {
- protected:
+ private:
+  bool swarm_is_occupied{false};
   double weight_per_robot;            // kg
+  int required_robots_system;
   std::vector<int> assigned_ids{};
   std::vector<int> assigned_site_id{};
   std::unordered_map<int, Robot> robots_avail{};
   std::unordered_map<int, Site> sites{};
   std::unordered_map<int, std::set<int>> robots_at_site_waiting;
+
+  /**
+   * @brief Clear crates from vect
+   * 
+   */
+  void clear_crates();
+
+  /**
+   * @brief Clear robots from vec
+   * 
+   */
+  void clear_robots();
+
  public:
   SwarmMaster(double _weight_per_robot=2.0) :
     weight_per_robot{_weight_per_robot} {}
@@ -50,6 +65,14 @@ class SwarmMaster {
   * 
   */
   int add_crate_to_system(Crate crate);
+
+  /**
+   * @brief Check if there are enough robots for crate reqs
+   * 
+   * @return true 
+   * @return false 
+   */
+  bool enough_robots_for_assignments();
 
   /**
   * @brief Find the relative positions of each robot in the crate frame
@@ -84,24 +107,10 @@ class SwarmMaster {
   std::pair<bool, int> all_robots_at_site_waiting(int robot_id);
 
   /**
-  * @brief Grab next task from task queue and get it done.
-  * 
-  * @return true 
-  * @return false 
-  */
-  bool perform_next_task();
-
-  /**
-   * @brief Clear crates from vect
+   * @brief Resets swarm
    * 
    */
-  void clear_crates();
-
-  /**
-   * @brief Clear robots from vec
-   * 
-   */
-  void clear_robots();
+  void reset_swarm();
 
   /**
   * @brief Get avail robots

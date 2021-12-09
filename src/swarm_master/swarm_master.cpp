@@ -33,9 +33,14 @@ int SwarmMaster::add_crate_to_system(Crate crate) {
     if (crate.mass > 4 * weight_per_robot)
         throw std::invalid_argument("Crate is too heavy for system!");
     sites.emplace(id, Site(id, crate, weight_per_robot));
+    required_robots_system += sites.at(id).robots_required;
     robots_at_site_waiting.insert({id, {}});
     assigned_site_id.push_back(id);
     return id;
+}
+
+bool SwarmMaster::enough_robots_for_assignments() {
+    return robots_avail.size() >= required_robots_system;
 }
 
 std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const Site& site) {
@@ -74,16 +79,19 @@ std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const
 }
 
 std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates() {
-    GrowingRadiusDesignator designator(sites, robots_avail);
-    auto designations = designator.get_designations();
     std::shared_ptr<std::vector<Assignment> > assignments;
-    for (const auto& designation : *designations) {
-        auto along_crate = assign_robots_along_crate(designation);
-        for (std::size_t i=0; i<designation.assigned_ids.size(); i++) {
-            int robot_id = designation.assigned_ids[i];
-            robots_avail.at(robot_id).assigned_site = designation.site_id;
-            assignments->push_back({robot_id, designation.site_id,
-                        designation.crate, along_crate[i]});
+    if (!swarm_is_occupied) {
+        swarm_is_occupied = true;
+        GrowingRadiusDesignator designator(sites, robots_avail);
+        auto designations = designator.get_designations();
+        for (const auto& designation : *designations) {
+            auto along_crate = assign_robots_along_crate(designation);
+            for (std::size_t i=0; i<designation.assigned_ids.size(); i++) {
+                int robot_id = designation.assigned_ids[i];
+                robots_avail.at(robot_id).assigned_site = designation.site_id;
+                assignments->push_back({robot_id, designation.site_id,
+                            designation.crate, along_crate[i]});
+            }
         }
     }
     return assignments;
@@ -127,6 +135,12 @@ void SwarmMaster::clear_crates() {
 void SwarmMaster::clear_robots() {
     robots_avail.clear();
     assigned_ids.clear();
+}
+
+void SwarmMaster::reset_swarm() {
+    clear_crates();
+    clear_robots();
+    swarm_is_occupied = false;
 }
 
 const std::unordered_map<int, Robot> SwarmMaster::get_avail_robots() {
