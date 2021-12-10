@@ -53,12 +53,17 @@ TEST(SwarmMasterTests, TestAssignCrates) {
     EXPECT_ANY_THROW(master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 8.1}));
 }
 
-// TEST(SwarmMasterTest, TestResetSwarm) {
-//     SwarmMaster master(2.0);
-//     master.add_robot_to_swarm({1,4});
-//     master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 1});
+TEST(SwarmMasterTest, TestResetSwarm) {
+    SwarmMaster master(2.0);
+    master.add_robot_to_swarm({1,4});
+    master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 1});
+    EXPECT_NE(master.get_avail_robots().size(), 0);
+    EXPECT_NE(master.get_sites().size(), 0);
 
-// }
+    master.reset_swarm();
+    EXPECT_EQ(master.get_avail_robots().size(), 0);
+    EXPECT_EQ(master.get_sites().size(), 0);
+}
 
 TEST(SwarmMasterTest, TestNotEnoughRobots) {
     SwarmMaster master(2.0);
@@ -77,7 +82,10 @@ TEST(SwarmMasterTest, TestSwarmOccupied) {
     EXPECT_NE(master.assign_robots_to_crates()->size(), 0);
     EXPECT_TRUE(master.enough_robots_for_assignments());
     EXPECT_EQ(master.assign_robots_to_crates()->size(), 0);
-    master.reset_swarm();
+
+    master.clear_tasks();
+    master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 1});
+    EXPECT_TRUE(master.enough_robots_for_assignments());
     EXPECT_NE(master.assign_robots_to_crates()->size(), 0);
 }
 

@@ -39,7 +39,7 @@ class SwarmMaster {
    * @brief Clear crates from vect
    * 
    */
-  void clear_crates();
+  void clear_sites();
 
   /**
    * @brief Clear robots from vec
@@ -105,6 +105,12 @@ class SwarmMaster {
    * @return false 
    */
   std::pair<bool, int> all_robots_at_site_waiting(int robot_id);
+
+  /**
+   * @brief Clears all task related vars
+   * 
+   */
+  void clear_tasks();
 
   /**
    * @brief Resets swarm

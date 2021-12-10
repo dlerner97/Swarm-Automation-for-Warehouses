@@ -127,9 +127,11 @@ std::pair<bool, int> SwarmMaster::all_robots_at_site_waiting(int robot_id) {
     return std::make_pair(false, site_id);
 }
 
-void SwarmMaster::clear_crates() {
+void SwarmMaster::clear_sites() {
     sites.clear();
     assigned_site_id.clear();
+    required_robots_system = 0;
+    robots_at_site_waiting.clear();
 }
 
 void SwarmMaster::clear_robots() {
@@ -137,10 +139,14 @@ void SwarmMaster::clear_robots() {
     assigned_ids.clear();
 }
 
-void SwarmMaster::reset_swarm() {
-    clear_crates();
-    clear_robots();
+void SwarmMaster::clear_tasks() {
+    clear_sites();
     swarm_is_occupied = false;
+}
+
+void SwarmMaster::reset_swarm() {
+    clear_tasks();
+    clear_robots();
 }
 
 const std::unordered_map<int, Robot> SwarmMaster::get_avail_robots() {
@@ -148,9 +154,14 @@ const std::unordered_map<int, Robot> SwarmMaster::get_avail_robots() {
 }
 
 const std::unordered_map<int, Site>& SwarmMaster::get_sites() {
+    if (sites.size() != assigned_site_id.size() ||
+        sites.size() != robots_at_site_waiting.size()) 
+            throw std::length_error("Sites not initialized correctly.");
     return sites;
 }
 
 int SwarmMaster::get_num_robots_required() {
+    if (robots_avail.size() != assigned_ids.size())
+        throw std::length_error("Robots not initialized correctly.");
     return required_robots_system;
 }
