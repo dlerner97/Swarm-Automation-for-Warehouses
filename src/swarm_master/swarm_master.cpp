@@ -79,7 +79,7 @@ std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const
 }
 
 std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates() {
-    std::shared_ptr<std::vector<Assignment> > assignments{};
+    std::shared_ptr<std::vector<Assignment> > assignments = std::make_shared<std::vector<Assignment> >();
     if (!swarm_is_occupied && enough_robots_for_assignments()) {
         swarm_is_occupied = true;
         GrowingRadiusDesignator designator(sites, robots_avail);
@@ -98,7 +98,7 @@ std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates()
 }
 
 std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(const Assignment& assignment) {
-    std::shared_ptr<std::vector<Task>> ret;
+    std::shared_ptr<std::vector<Task> > ret = std::make_shared<std::vector<Task> >();
     typedef std::unordered_map<std::string, double> commandDict;
     ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
 
@@ -149,4 +149,8 @@ const std::unordered_map<int, Robot> SwarmMaster::get_avail_robots() {
 
 const std::unordered_map<int, Site>& SwarmMaster::get_sites() {
     return sites;
+}
+
+int SwarmMaster::get_num_robots_required() {
+    return required_robots_system;
 }

@@ -28,7 +28,7 @@ class SwarmMaster {
  private:
   bool swarm_is_occupied{false};
   double weight_per_robot;            // kg
-  int required_robots_system;
+  int required_robots_system{};
   std::vector<int> assigned_ids{};
   std::vector<int> assigned_site_id{};
   std::unordered_map<int, Robot> robots_avail{};
@@ -125,4 +125,11 @@ class SwarmMaster {
   * @return const std::vector<Site>&
   */
   const std::unordered_map<int, Site>& get_sites();
+
+  /**
+   * @brief Get the num robots required object
+   * 
+   * @return int 
+   */
+  int get_num_robots_required();
 };

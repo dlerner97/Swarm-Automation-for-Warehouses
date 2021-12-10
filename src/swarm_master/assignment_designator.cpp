@@ -18,7 +18,7 @@
 #include "../../include/swarm_master/assignment_designator.hpp"
 
 GrowingRadiusDesignator::SiteVec GrowingRadiusDesignator::get_designations() {
-    SiteVec ret = std::make_shared<std::vector<Site>>(std::vector<Site>{});
+    SiteVec ret = std::make_shared<std::vector<Site> >();
     int robots_required{0};
     std::unordered_map<int, int> used_id_map{};
     for (auto& site_pair : all_sites) {

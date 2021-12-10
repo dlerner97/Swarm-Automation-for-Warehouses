@@ -20,7 +20,7 @@
 
 class AssignmentDesignator {
  protected:
-    typedef std::shared_ptr<std::vector<Site>> SiteVec;
+    typedef std::shared_ptr<std::vector<Site> > SiteVec;
     std::unordered_map<int, Site>& all_sites;
     std::unordered_map<int, Robot>& all_robots;
  public:
