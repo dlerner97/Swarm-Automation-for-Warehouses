@@ -16,19 +16,18 @@
 
 TEST(SwarmMasterTests, TestAddRobotToSwarm) {
     SwarmMaster master;
+    std::vector<int> robs_ids{};
     std::array<double, 2> initial_pos{2, 3};
-    master.add_robot_to_swarm(initial_pos);
-    master.add_robot_to_swarm({1,4});
-    const auto& id_robots = master.get_avail_robots();
-    auto assigned_ids = id_robots.first;
-    auto robots_avail = id_robots.second;
-    EXPECT_EQ(assigned_ids[0], 0);
-    EXPECT_EQ(assigned_ids[1], 1);
-    EXPECT_EQ(robots_avail[0].id, 0);
-    EXPECT_EQ(robots_avail[0].pos[0], 2);
-    EXPECT_EQ(robots_avail[0].pos[1], 3);
-    EXPECT_EQ(robots_avail[1].pos[0], 1);
-    EXPECT_EQ(robots_avail[1].pos[1], 4);
+    robs_ids.push_back(master.add_robot_to_swarm(initial_pos));
+    robs_ids.push_back(master.add_robot_to_swarm({1,4}));
+    const auto& avail_robots = master.get_avail_robots();
+    for (const auto& id_robot : robs_ids)
+        EXPECT_EQ(id_robot, avail_robots.at(id_robot).id);
+    
+    EXPECT_EQ(avail_robots.at(robs_ids[0]).pos[0], 2);
+    EXPECT_EQ(avail_robots.at(robs_ids[0]).pos[1], 3);
+    EXPECT_EQ(avail_robots.at(robs_ids[1]).pos[0], 1);
+    EXPECT_EQ(avail_robots.at(robs_ids[1]).pos[1], 4);
 }
 
 TEST(SwarmMasterTests, TestAssignCrates) {
