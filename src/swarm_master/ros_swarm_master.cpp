@@ -32,15 +32,16 @@ bool RosSwarmMaster::swarm_reset_callback(std_srvs::Empty::Request&,
                                           std_srvs::Empty::Response&) {
     ROS_INFO_STREAM("RESETTING SWARM");
     master.reset_swarm();
+    return true;
 }
 
-void RosSwarmMaster::get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id) {
+void RosSwarmMaster::get_robot_waiting_callback(const std_msgs::UInt16::ConstPtr& robot_id) {
     auto all_waiting_AND_site = master.all_robots_at_site_waiting(robot_id->data);
     if (all_waiting_AND_site.first)
         all_site_ready_pub.at(all_waiting_AND_site.second).publish(std_msgs::Empty());
 }
 
-void RosSwarmMaster::get_task_callback(warehouse_swarm::Crate::ConstPtr& crate) {
+void RosSwarmMaster::get_task_callback(const warehouse_swarm::Crate::ConstPtr& crate) {
     int site_id = master.add_crate_to_system(
         Crate({crate->start_pos.x, crate->start_pos.y, crate->start_pos.z},
               {crate->goal_pos.x, crate->goal_pos.y, crate->goal_pos.z},

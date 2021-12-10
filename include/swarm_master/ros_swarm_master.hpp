@@ -43,7 +43,7 @@ class RosSwarmMaster {
     * @brief Get task callback function for swarm task service server
     * 
     */
-  void get_task_callback(warehouse_swarm::Crate::ConstPtr& crate);
+  void get_task_callback(const warehouse_swarm::Crate::ConstPtr& crate);
 
   /**
     * @brief Swarm connect callback function for swarm connect service server
@@ -64,7 +64,7 @@ class RosSwarmMaster {
     * 
     * @param robot_id 
     */
-  void get_robot_waiting_callback(std_msgs::UInt16::ConstPtr& robot_id);
+  void get_robot_waiting_callback(const std_msgs::UInt16::ConstPtr& robot_id);
 
  public:
   RosSwarmMaster(double _weight_per_robot=2.0) : 
