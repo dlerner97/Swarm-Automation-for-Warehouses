@@ -64,7 +64,7 @@ std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const
         ret.push_back({0, smaller_half_footprint, 270});
         ret.push_back({0, -smaller_half_footprint, 90});
     } else {
-        throw std::invalid_argument("There must be fewer than 4 robots. We cannot lift this crate!");
+        throw std::invalid_argument("There must be fewer than 5 robots. We cannot lift this crate!");
     }
     if (footprint[1] > footprint[0]) {
         for (auto& pos : ret) {
@@ -79,8 +79,8 @@ std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const
 }
 
 std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates() {
-    std::shared_ptr<std::vector<Assignment> > assignments;
-    if (!swarm_is_occupied) {
+    std::shared_ptr<std::vector<Assignment> > assignments{};
+    if (!swarm_is_occupied && enough_robots_for_assignments()) {
         swarm_is_occupied = true;
         GrowingRadiusDesignator designator(sites, robots_avail);
         auto designations = designator.get_designations();

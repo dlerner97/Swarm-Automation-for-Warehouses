@@ -85,7 +85,13 @@ class RosSwarmMaster {
     * @brief Call SwarmMaster assign_robots_to_crate
     * 
     */
-  void assign_robots();
+  bool assign_robots();
 
+  /**
+   * @brief Startup the swarm
+   * 
+   * @param duration 
+   */
+  void startup(double duration=10, double hz=20);
 
 };

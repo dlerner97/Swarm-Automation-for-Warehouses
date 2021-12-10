@@ -14,7 +14,8 @@
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "swarm_master");
-    RosSwarmMaster master;
-    ros::Duration(10).sleep();
+    RosSwarmMaster master(2.0);
+    master.startup();
+    ros::spin();
     return 0;
 }

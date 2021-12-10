@@ -52,7 +52,7 @@ void RosSwarmMaster::get_task_callback(warehouse_swarm::Crate::ConstPtr& crate) 
         &RosSwarmMaster::get_robot_waiting_callback, this);
 }
 
-void RosSwarmMaster::assign_robots() {
+bool RosSwarmMaster::assign_robots() {
     auto assignments = master.assign_robots_to_crates();
     for (const auto& assignment : *assignments) {
         auto robot_tasks = master.break_down_assignment(assignment);
@@ -79,4 +79,21 @@ void RosSwarmMaster::assign_robots() {
             all_task_publisher.at(assignment.robot_id).publish(task_msg);
         }
     }
+    return !assignments->empty();
+}
+
+void RosSwarmMaster::startup(double duration, double hz) {
+    ros::Duration dur(duration);
+    ros::Rate rate(hz);
+
+    bool assigned = false;
+    while (!assigned) {
+        auto startup_begin_time = ros::Time::now();
+        while (ros::ok() && ros::Time::now() - startup_begin_time < dur) {
+            ros::spinOnce();
+            rate.sleep();
+        }
+        assigned = assign_robots();
+    }
+
 }
