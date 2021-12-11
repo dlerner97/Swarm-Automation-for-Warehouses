@@ -251,6 +251,31 @@ TEST(SwarmMasterTests, TestBreakDownAssignment) {
     }
 }
 
+TEST(SwarmMasterTests, TestAllRobotsAtSiteWaiting) {
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
+    std::vector<int> site_ids{};
+    std::vector<int> robot_ids = add_buncha_robots(&master);
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1}));
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {2,8}, 5}));
+    auto assignments = master.assign_robots_to_crates();
+
+    std::vector<int> site1_robot_ids{};
+    std::vector<int> site2_robot_ids{};
+
+    for (const auto& assignment : *assignments) {
+        if (assignment.site_id == site_ids[0]) site1_robot_ids.push_back(assignment.robot_id);
+        else if (assignment.site_id == site_ids[1]) site2_robot_ids.push_back(assignment.robot_id);
+        else EXPECT_TRUE(false);
+    }
+
+    EXPECT_FALSE(master.all_robots_at_site_waiting(site1_robot_ids[0]).first);
+    EXPECT_FALSE(master.all_robots_at_site_waiting(site2_robot_ids[0]).first);
+    EXPECT_TRUE(master.all_robots_at_site_waiting(site1_robot_ids[1]).first);
+    EXPECT_FALSE(master.all_robots_at_site_waiting(site2_robot_ids[1]).first);
+    EXPECT_TRUE(master.all_robots_at_site_waiting(site2_robot_ids[2]).first);
+}
+
 std::vector<int> add_buncha_robots(SwarmMaster* master) {
     std::vector<int> ret{};
     ret.push_back(master->add_robot_to_swarm({1,4}));
