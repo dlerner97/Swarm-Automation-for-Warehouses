@@ -14,12 +14,21 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include "../include/swarm_master/swarm_master.hpp"
+#include "../include/swarm_master/assignment_designator.hpp"
 
 std::vector<int> add_buncha_robots(SwarmMaster* master);
 bool found_pos_in_vec(std::vector<std::array<double, 3>>& pos_along_crate, std::array<double, 3> pos);
 
+TEST(SwarmMasterTests, InitializeSwarmMaster) {
+    SimpleClosestDesignator designator;
+    EXPECT_NO_THROW(SwarmMaster master(&designator));
+    EXPECT_NO_THROW(SwarmMaster master(&designator, 0.1));
+    EXPECT_ANY_THROW(SwarmMaster master(&designator, 0.0));
+}
+
 TEST(SwarmMasterTests, TestAddRobotToSwarm) {
-    SwarmMaster master;
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     std::vector<int> robs_ids{};
     std::array<double, 2> initial_pos{2, 3};
     robs_ids.push_back(master.add_robot_to_swarm(initial_pos));
@@ -35,7 +44,8 @@ TEST(SwarmMasterTests, TestAddRobotToSwarm) {
 }
 
 TEST(SwarmMasterTests, TestAssignCrates) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     std::vector<int> site_ids{};
     Crate c1({1,2,3}, {4,5,6}, {3,4}, 6.2);
     site_ids.push_back(master.add_crate_to_system(c1));
@@ -57,7 +67,8 @@ TEST(SwarmMasterTests, TestAssignCrates) {
 }
 
 TEST(SwarmMasterTests, TestResetSwarm) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     master.add_robot_to_swarm({1,4});
     master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 1});
     EXPECT_NE(master.get_avail_robots().size(), 0);
@@ -69,7 +80,8 @@ TEST(SwarmMasterTests, TestResetSwarm) {
 }
 
 TEST(SwarmMasterTests, TestNotEnoughRobots) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 5.8});
     master.add_robot_to_swarm({1,4});
     EXPECT_FALSE(master.enough_robots_for_assignments());
@@ -77,7 +89,8 @@ TEST(SwarmMasterTests, TestNotEnoughRobots) {
 }
 
 TEST(SwarmMasterTests, TestSwarmOccupied) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 1});
     master.add_robot_to_swarm({1,4});
     master.add_robot_to_swarm({2,5});
@@ -93,7 +106,8 @@ TEST(SwarmMasterTests, TestSwarmOccupied) {
 }
 
 TEST(SwarmMasterTests, TestAssignUniqueRobotsToMultipleCrates) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     std::vector<int> site_ids{};
     std::vector<int> robot_ids = add_buncha_robots(&master);
 
@@ -136,7 +150,8 @@ TEST(SwarmMasterTests, TestAssignUniqueRobotsToMultipleCrates) {
 }
 
 TEST(SwarmMasterTests, TestAssignmentsForTwoRobotReq) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     std::vector<int> site_ids{};
     std::vector<int> robot_ids = add_buncha_robots(&master);
     site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1}));
@@ -157,7 +172,8 @@ TEST(SwarmMasterTests, TestAssignmentsForTwoRobotReq) {
 }
 
 TEST(SwarmMasterTests, TestAssignmentsForThreeRobotReq) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     std::vector<int> site_ids{};
     std::vector<int> robot_ids = add_buncha_robots(&master);
     site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 5}));
@@ -180,7 +196,8 @@ TEST(SwarmMasterTests, TestAssignmentsForThreeRobotReq) {
 }
 
 TEST(SwarmMasterTests, TestAssignmentsForFourRobotReq) {
-    SwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
     std::vector<int> site_ids{};
     std::vector<int> robot_ids = add_buncha_robots(&master);
     site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 7}));

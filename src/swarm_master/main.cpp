@@ -11,10 +11,12 @@
 
 #include <ros/ros.h>
 #include "../../include/swarm_master/ros_swarm_master.hpp"
+#include "../../include/swarm_master/assignment_designator.hpp"
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "swarm_master");
-    RosSwarmMaster master(2.0);
+    SimpleClosestDesignator designator;
+    RosSwarmMaster master(&designator, 2.0);
     master.startup();
     ros::spin();
     return 0;

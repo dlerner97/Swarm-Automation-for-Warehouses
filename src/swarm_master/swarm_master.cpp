@@ -85,8 +85,7 @@ std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates()
     std::shared_ptr<std::vector<Assignment> > assignments = std::make_shared<std::vector<Assignment> >();
     if (!swarm_is_occupied && enough_robots_for_assignments()) {
         swarm_is_occupied = true;
-        GrowingRadiusDesignator designator(sites, robots_avail);
-        auto designations = designator.get_designations();
+        auto designations = designator->get_designations(sites, robots_avail);
         for (const auto& designation : *designations) {
             auto along_crate = assign_robots_along_crate(designation);
             for (std::size_t i=0; i<designation.assigned_ids.size(); i++) {

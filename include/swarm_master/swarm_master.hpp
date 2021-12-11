@@ -26,6 +26,7 @@
 
 class SwarmMaster {
  private:
+  AssignmentDesignator* designator;
   bool swarm_is_occupied{false};
   double weight_per_robot;            // kg
   int required_robots_system{};
@@ -48,9 +49,12 @@ class SwarmMaster {
   void clear_robots();
 
  public:
-  SwarmMaster(double _weight_per_robot=2.0) :
-    weight_per_robot{_weight_per_robot} {}
-  ~SwarmMaster() {}
+  SwarmMaster(AssignmentDesignator* _designator,
+              double _weight_per_robot=2.0) :
+      weight_per_robot{_weight_per_robot},
+      designator{_designator} {
+    if (_weight_per_robot <= 0) throw std::invalid_argument("Robot strength must be greater than 0.");
+  }
 
   /**
   * @brief Add robot to swarm

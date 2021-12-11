@@ -17,7 +17,9 @@
 #include <unordered_map>
 #include "../../include/swarm_master/assignment_designator.hpp"
 
-GrowingRadiusDesignator::SiteVec GrowingRadiusDesignator::get_designations() {
+SimpleClosestDesignator::SiteVec SimpleClosestDesignator::get_designations(
+        std::unordered_map<int, Site>& all_sites,
+        std::unordered_map<int, Robot>& all_robots) {
     SiteVec ret = std::make_shared<std::vector<Site> >();
     int robots_required{0};
     std::unordered_map<int, int> used_id_map{};

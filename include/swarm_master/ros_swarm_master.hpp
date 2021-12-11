@@ -67,8 +67,8 @@ class RosSwarmMaster {
   void get_robot_waiting_callback(const std_msgs::UInt16::ConstPtr& robot_id);
 
  public:
-  RosSwarmMaster(double _weight_per_robot=2.0) : 
-          master{_weight_per_robot} {
+  RosSwarmMaster(AssignmentDesignator* designator, double _weight_per_robot=2.0) : 
+          master{designator, _weight_per_robot} {
       ROS_INFO_STREAM("Spinning up RosSwarmMaster.");
       swarm_reset_server = nh.advertiseService(
         "swarm_reset", &RosSwarmMaster::swarm_reset_callback, this);

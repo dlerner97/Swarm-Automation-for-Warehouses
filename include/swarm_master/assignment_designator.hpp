@@ -21,22 +21,13 @@
 class AssignmentDesignator {
  protected:
     typedef std::shared_ptr<std::vector<Site> > SiteVec;
-    std::unordered_map<int, Site>& all_sites;
-    std::unordered_map<int, Robot>& all_robots;
- public:
-    AssignmentDesignator(std::unordered_map<int, Site>& sites, std::unordered_map<int, Robot>& robots) :
-            all_sites{sites},
-            all_robots{robots} {}
-
-    ~AssignmentDesignator() {}
-
-    virtual SiteVec get_designations() = 0;
+ public:  
+    virtual SiteVec get_designations(std::unordered_map<int, Site>& all_sites,
+                                     std::unordered_map<int, Robot>& all_robots) = 0;
 };
 
-class GrowingRadiusDesignator : public AssignmentDesignator {
+class SimpleClosestDesignator : public AssignmentDesignator {
  public:
-    GrowingRadiusDesignator(std::unordered_map<int, Site>& sites, std::unordered_map<int, Robot>& robots) :
-        AssignmentDesignator{sites, robots} {}
-
-    SiteVec get_designations();
+    SiteVec get_designations(std::unordered_map<int, Site>& all_sites,
+                             std::unordered_map<int, Robot>& all_robots);
 };
