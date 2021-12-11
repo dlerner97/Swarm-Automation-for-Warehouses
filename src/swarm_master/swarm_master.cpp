@@ -102,20 +102,20 @@ std::shared_ptr<std::vector<Assignment> > SwarmMaster::assign_robots_to_crates()
 std::shared_ptr<std::vector<Task> > SwarmMaster::break_down_assignment(const Assignment& assignment) {
     std::shared_ptr<std::vector<Task> > ret = std::make_shared<std::vector<Task> >();
     typedef std::unordered_map<std::string, double> commandDict;
-    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
+    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.05}}});
 
     auto toX_begin = assignment.crate.start_pos[0] + assignment.pos_crate_frame[0];
     auto toY_begin = assignment.crate.start_pos[1] + assignment.pos_crate_frame[1];
 
     ret->push_back({Task::Drive, commandDict{{"ToX", toX_begin}, {"ToY", toY_begin}, {"ToTheta", assignment.pos_crate_frame[2]}}});
-    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]}}});
+    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.goal_pos[2]}}});
     ret->push_back({Task::Wait, commandDict{{"AssignmentID", assignment.site_id}}});
 
     auto toX_end = assignment.crate.goal_pos[0] + assignment.pos_crate_frame[0];
     auto toY_end = assignment.crate.goal_pos[1] + assignment.pos_crate_frame[1];
     ret->push_back({Task::Drive, commandDict{{"ToX", toX_end}, {"ToY", toY_end}, {"ToTheta", assignment.pos_crate_frame[2]}}});
     ret->push_back({Task::Wait, commandDict{{"AssignmentID", assignment.site_id}}});
-    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.start_pos[2]-0.5}}});
+    ret->push_back({Task::MvPlatform, commandDict{{"PlatformHeight", assignment.crate.goal_pos[2]-0.05}}});
     return ret;
 }
 

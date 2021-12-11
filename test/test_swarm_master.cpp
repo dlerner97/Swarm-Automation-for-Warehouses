@@ -11,13 +11,15 @@
 
 #include <iostream>
 #include <array>
-#include <algorithm>
 #include <gtest/gtest.h>
+#include "../include/structs/task.hpp"
 #include "../include/swarm_master/swarm_master.hpp"
 #include "../include/swarm_master/assignment_designator.hpp"
 
+bool operator==(const Task& t1, const Task& t2);
+template<class Element>
+bool found_element_in_vec(std::vector<Element>& pos_along_crate, Element pos);
 std::vector<int> add_buncha_robots(SwarmMaster* master);
-bool found_pos_in_vec(std::vector<std::array<double, 3>>& pos_along_crate, std::array<double, 3> pos);
 
 TEST(SwarmMasterTests, InitializeSwarmMaster) {
     SimpleClosestDesignator designator;
@@ -165,10 +167,10 @@ TEST(SwarmMasterTests, TestAssignmentsForTwoRobotReq) {
     for (const auto& assignment : *assignments)
         pos_along_crate.push_back(assignment.pos_crate_frame);
 
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-3, 0, 0}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {3, 0, 180}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, -4, 90}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, 4, 270}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {-3, 0, 0}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {3, 0, 180}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {0, -4, 90}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {0, 4, 270}));
 }
 
 TEST(SwarmMasterTests, TestAssignmentsForThreeRobotReq) {
@@ -187,12 +189,12 @@ TEST(SwarmMasterTests, TestAssignmentsForThreeRobotReq) {
     for (const auto& assignment : *assignments)
         pos_along_crate.push_back(assignment.pos_crate_frame);
     
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-3, 0, 0}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {2.8, 2, 270}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {2.8, -2, 90}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, -4, 90}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {1, 3.8, 180}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-1, 3.8, 0}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {-3, 0, 0}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {2.8, 2, 270}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {2.8, -2, 90}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {0, -4, 90}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {1, 3.8, 180}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {-1, 3.8, 0}));
 }
 
 TEST(SwarmMasterTests, TestAssignmentsForFourRobotReq) {
@@ -210,33 +212,44 @@ TEST(SwarmMasterTests, TestAssignmentsForFourRobotReq) {
     for (const auto& assignment : *assignments)
         pos_along_crate.push_back(assignment.pos_crate_frame);
 
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-3, 0, 0}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {3, 0, 180}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, -2, 90}));
-    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, 2, 270}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {-3, 0, 0}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {3, 0, 180}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {0, -2, 90}));
+    EXPECT_TRUE(found_element_in_vec(pos_along_crate, {0, 2, 270}));
 }
 
-// TEST(SwarmMasterTests, TestBreakDownAssignment) {
-//     SimpleClosestDesignator designator;
-//     SwarmMaster master(&designator);
-//     std::vector<int> robot_ids = add_buncha_robots(&master);
-//     int site_id = master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1});
-//     const auto& assignments = master.assign_robots_to_crates();
-//     for (const auto& assignment : *assignments) {
-//         const auto& tasks = master.break_down_assignment(assignment);
-//         for (const auto& task : *tasks) {
-//             if (task.task == task.Drive) {
-//                 EXPECT_EQ(task.num_param_dict.at("ToX"), 9);
-//             } else if (task.task == task.MvPlatform) {
+TEST(SwarmMasterTests, TestBreakDownAssignment) {
+    SimpleClosestDesignator designator;
+    SwarmMaster master(&designator);
+    std::vector<int> robot_ids = add_buncha_robots(&master);
+    int site_id = master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 5});
 
-//             } else if (task.task == task.Wait) {
+    std::vector<Task> true_tasks;
+    typedef std::unordered_map<std::string, double> commandDict;
 
-//             } else {
-//                 EXPECT_TRUE(false);
-//             }
-//         }
-//     }
-// }
+    true_tasks.push_back({Task::MvPlatform, commandDict{{"PlatformHeight", 0.95}}});
+    true_tasks.push_back({Task::Drive, commandDict{{"ToX", 0}, {"ToY", 2}, {"ToTheta", 0}}});
+    true_tasks.push_back({Task::Drive, commandDict{{"ToX", 5.8}, {"ToY", 4}, {"ToTheta", 270}}});
+    true_tasks.push_back({Task::Drive, commandDict{{"ToX", 5.8}, {"ToY", 0}, {"ToTheta", 90}}});
+    true_tasks.push_back({Task::MvPlatform, commandDict{{"PlatformHeight", 4}}});
+    true_tasks.push_back({Task::Wait, commandDict{{"AssignmentID", site_id}}});
+    true_tasks.push_back({Task::Drive, commandDict{{"ToX", 3}, {"ToY", 5}, {"ToTheta", 0}}});
+    true_tasks.push_back({Task::Drive, commandDict{{"ToX", 8.8}, {"ToY", 7}, {"ToTheta", 270}}});
+    true_tasks.push_back({Task::Drive, commandDict{{"ToX", 8.8}, {"ToY", 3}, {"ToTheta", 90}}});
+    true_tasks.push_back({Task::Wait, commandDict{{"AssignmentID", site_id}}});
+    true_tasks.push_back({Task::MvPlatform, commandDict{{"PlatformHeight", 3.95}}});
+
+    EXPECT_FALSE(found_element_in_vec(true_tasks, Task(Task::Wait, commandDict{})));
+    const auto& assignments = master.assign_robots_to_crates();
+    EXPECT_EQ(assignments->size(), 3);
+    for (const auto& assignment : *assignments) {
+        const auto& tasks = master.break_down_assignment(assignment);
+        EXPECT_EQ(tasks->size(), 7);
+        for (const auto& task : *tasks) {
+            EXPECT_TRUE(found_element_in_vec(true_tasks, task));
+        }
+    }
+}
 
 std::vector<int> add_buncha_robots(SwarmMaster* master) {
     std::vector<int> ret{};
@@ -252,6 +265,15 @@ std::vector<int> add_buncha_robots(SwarmMaster* master) {
     return ret;
 }
 
-bool found_pos_in_vec(std::vector<std::array<double, 3>>& pos_along_crate, std::array<double, 3> pos) {
+template<class Element>
+bool found_element_in_vec(std::vector<Element>& pos_along_crate, Element pos) {
     return (std::find(pos_along_crate.begin(), pos_along_crate.end(), pos) != pos_along_crate.end());
+}
+
+bool operator==(const Task& t1, const Task& t2) {
+    bool ret = true;
+    ret = ret && (t1.task == t2.task);
+    ret = ret && (t1.num_param_dict == t2.num_param_dict);
+    ret = ret && (t1.command_param_dict == t2.command_param_dict);
+    return ret;
 }
