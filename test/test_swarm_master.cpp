@@ -15,6 +15,9 @@
 #include <gtest/gtest.h>
 #include "../include/swarm_master/swarm_master.hpp"
 
+std::vector<int> add_buncha_robots(SwarmMaster* master);
+bool found_pos_in_vec(std::vector<std::array<double, 3>>& pos_along_crate, std::array<double, 3> pos);
+
 TEST(SwarmMasterTests, TestAddRobotToSwarm) {
     SwarmMaster master;
     std::vector<int> robs_ids{};
@@ -53,7 +56,7 @@ TEST(SwarmMasterTests, TestAssignCrates) {
     EXPECT_ANY_THROW(master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 8.1}));
 }
 
-TEST(SwarmMasterTest, TestResetSwarm) {
+TEST(SwarmMasterTests, TestResetSwarm) {
     SwarmMaster master(2.0);
     master.add_robot_to_swarm({1,4});
     master.add_crate_to_system({{3,2,1}, {6,5,4}, {4,6}, 1});
@@ -65,7 +68,7 @@ TEST(SwarmMasterTest, TestResetSwarm) {
     EXPECT_EQ(master.get_sites().size(), 0);
 }
 
-TEST(SwarmMasterTest, TestNotEnoughRobots) {
+TEST(SwarmMasterTests, TestNotEnoughRobots) {
     SwarmMaster master(2.0);
     master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 5.8});
     master.add_robot_to_swarm({1,4});
@@ -73,7 +76,7 @@ TEST(SwarmMasterTest, TestNotEnoughRobots) {
     EXPECT_EQ(master.assign_robots_to_crates()->size(), 0);
 }
 
-TEST(SwarmMasterTest, TestSwarmOccupied) {
+TEST(SwarmMasterTests, TestSwarmOccupied) {
     SwarmMaster master(2.0);
     master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 1});
     master.add_robot_to_swarm({1,4});
@@ -89,55 +92,129 @@ TEST(SwarmMasterTest, TestSwarmOccupied) {
     EXPECT_NE(master.assign_robots_to_crates()->size(), 0);
 }
 
-// TEST(SwarmMasterTest, TestAssignRobotsToCrates) {
-//     SwarmMaster master(2.0);
-//     master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 5.8});
-//     master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1});
-//     master.add_robot_to_swarm({1,4});
-//     master.add_robot_to_swarm({3,2});
-//     master.add_robot_to_swarm({2,3});
-//     master.add_robot_to_swarm({5,5});
-//     master.add_robot_to_swarm({10,10});
+TEST(SwarmMasterTests, TestAssignUniqueRobotsToMultipleCrates) {
+    SwarmMaster master(2.0);
+    std::vector<int> site_ids{};
+    std::vector<int> robot_ids = add_buncha_robots(&master);
 
-//     const auto& sites = master.get_sites();
-//     auto assignments = master.assign_robots_to_crates();
-//     int s1 = 0, s2 = 0;
-//     std::vector<int> all_robot_ids{};
-//     std::vector<std::array<double, 2> > pos_along_crate_s1{};
-//     std::vector<std::array<double, 2> > pos_along_crate_s2{};
-//     for (const auto& assignment : assignments) {
-//         if (assignment.site_id == 0) {
-//             s1++;
-//             pos_along_crate_s1.push_back(assignment.pos_crate_frame);
-//         }
-//         else if (assignment.site_id == 1) {
-//             s2++;
-//             pos_along_crate_s2.push_back(assignment.pos_crate_frame);
-//         }
-//         all_robot_ids.push_back(assignment.robot_id);
-//     }
-//     EXPECT_EQ(s1, sites[0].robots_required);
-//     EXPECT_EQ(s2, sites[1].robots_required);
+    site_ids.push_back(master.add_crate_to_system({{1,2,3}, {4,5,6}, {3,4}, 5.8}));
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1}));
+    site_ids.push_back(master.add_crate_to_system({{11,12,11}, {16,15,14}, {5,5}, 7.2}));
 
-//     std::vector<int>::iterator it;
-//     const int size_all_robot_ids = all_robot_ids.size();
+    const auto& sites = master.get_sites();
+    auto assignments = master.assign_robots_to_crates();
 
-//     it = std::unique(all_robot_ids.begin(), all_robot_ids.end());
-//     all_robot_ids.resize(std::distance(all_robot_ids.begin(),it));
-//     EXPECT_EQ(all_robot_ids.size(), size_all_robot_ids);
+    int s1 = 0, s2 = 0, s3 = 0;
+    std::vector<int> all_robot_ids{};
+    std::vector<std::array<double, 3> > pos_along_crate_s1{};
+    std::vector<std::array<double, 3> > pos_along_crate_s2{};
+    std::vector<std::array<double, 3> > pos_along_crate_s3{};
+    for (const auto& assignment : *assignments) {
+        if (assignment.site_id == site_ids[0]) {
+            s1++;
+            pos_along_crate_s1.push_back(assignment.pos_crate_frame);
+        }
+        else if (assignment.site_id == site_ids[1]) {
+            s2++;
+            pos_along_crate_s2.push_back(assignment.pos_crate_frame);
+        } else if (assignment.site_id == site_ids[2]) {
+            s3++;
+            pos_along_crate_s3.push_back(assignment.pos_crate_frame);
+        }
+        all_robot_ids.push_back(assignment.robot_id);
+    }
+    EXPECT_EQ(s1, sites.at(site_ids[0]).robots_required);
+    EXPECT_EQ(s2, sites.at(site_ids[1]).robots_required);
+    EXPECT_EQ(s3, sites.at(site_ids[2]).robots_required);
 
-//     EXPECT_TRUE(std::find(pos_along_crate_s1.begin(), pos_along_crate_s1.end(),
-//         std::array<double, 2>({-2, 0})) != pos_along_crate_s1.end());
+    std::vector<int>::iterator it;
+    const int size_all_robot_ids = all_robot_ids.size();
+
+    it = std::unique(all_robot_ids.begin(), all_robot_ids.end());
+    all_robot_ids.resize(std::distance(all_robot_ids.begin(), it));
+    EXPECT_EQ(all_robot_ids.size(), size_all_robot_ids);
+}
+
+TEST(SwarmMasterTests, TestAssignmentsForTwoRobotReq) {
+    SwarmMaster master(2.0);
+    std::vector<int> site_ids{};
+    std::vector<int> robot_ids = add_buncha_robots(&master);
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1}));
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {2,8}, 1}));
+
+    const auto& sites = master.get_sites();
+    auto assignments = master.assign_robots_to_crates();
+    EXPECT_EQ(assignments->size(), 4);
+
+    std::vector<std::array<double, 3> > pos_along_crate{};
+    for (const auto& assignment : *assignments)
+        pos_along_crate.push_back(assignment.pos_crate_frame);
+
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-3, 0, 0}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {3, 0, 180}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, -4, 90}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, 4, 270}));
+}
+
+TEST(SwarmMasterTests, TestAssignmentsForThreeRobotReq) {
+    SwarmMaster master(2.0);
+    std::vector<int> site_ids{};
+    std::vector<int> robot_ids = add_buncha_robots(&master);
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 5}));
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {2,8}, 5}));
+
+    const auto& sites = master.get_sites();
+    auto assignments = master.assign_robots_to_crates();
+    EXPECT_EQ(assignments->size(), 6);
+
+    std::vector<std::array<double, 3> > pos_along_crate{};
+    for (const auto& assignment : *assignments)
+        pos_along_crate.push_back(assignment.pos_crate_frame);
     
-//     EXPECT_TRUE(std::find(pos_along_crate_s1.begin(), pos_along_crate_s1.end(),
-//         std::array<double, 2>({1.5, 1.5})) != pos_along_crate_s1.end());
-    
-//     EXPECT_TRUE(std::find(pos_along_crate_s1.begin(), pos_along_crate_s1.end(),
-//         std::array<double, 2>({1.5, -1.5})) != pos_along_crate_s1.end());
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-3, 0, 0}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {2.8, 2, 270}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {2.8, -2, 90}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, -4, 90}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {1, 3.8, 180}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-1, 3.8, 0}));
+}
 
-//     EXPECT_TRUE(std::find(pos_along_crate_s2.begin(), pos_along_crate_s2.end(),
-//         std::array<double, 2>({3, 0})) != pos_along_crate_s2.end());
+TEST(SwarmMasterTests, TestAssignmentsForFourRobotReq) {
+    SwarmMaster master(2.0);
+    std::vector<int> site_ids{};
+    std::vector<int> robot_ids = add_buncha_robots(&master);
+    site_ids.push_back(master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 7}));
 
-//     EXPECT_TRUE(std::find(pos_along_crate_s2.begin(), pos_along_crate_s2.end(),
-//         std::array<double, 2>({-3, 0})) != pos_along_crate_s2.end());
-// }
+    const auto& sites = master.get_sites();
+    auto assignments = master.assign_robots_to_crates();
+    EXPECT_EQ(assignments->size(), 4);
+
+    std::vector<std::array<double, 3> > pos_along_crate{};
+    for (const auto& assignment : *assignments)
+        pos_along_crate.push_back(assignment.pos_crate_frame);
+
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {-3, 0, 0}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {3, 0, 180}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, -2, 90}));
+    EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, 2, 270}));
+}
+
+
+
+std::vector<int> add_buncha_robots(SwarmMaster* master) {
+    std::vector<int> ret{};
+    ret.push_back(master->add_robot_to_swarm({1,4}));
+    ret.push_back(master->add_robot_to_swarm({3,2}));
+    ret.push_back(master->add_robot_to_swarm({2,3}));
+    ret.push_back(master->add_robot_to_swarm({5,5}));
+    ret.push_back(master->add_robot_to_swarm({10,10}));
+    ret.push_back(master->add_robot_to_swarm({11,11}));
+    ret.push_back(master->add_robot_to_swarm({12,12}));
+    ret.push_back(master->add_robot_to_swarm({13,14}));
+    ret.push_back(master->add_robot_to_swarm({10,14}));
+    return ret;
+}
+
+bool found_pos_in_vec(std::vector<std::array<double, 3>>& pos_along_crate, std::array<double, 3> pos) {
+    return (std::find(pos_along_crate.begin(), pos_along_crate.end(), pos) != pos_along_crate.end());
+}

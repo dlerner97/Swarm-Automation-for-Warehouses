@@ -46,33 +46,36 @@ bool SwarmMaster::enough_robots_for_assignments() {
 std::vector<std::array<double, 3> > SwarmMaster::assign_robots_along_crate(const Site& site) {
     int num_robots = site.assigned_ids.size();
     std::vector<std::array<double, 3>> ret;
-    ret.reserve(num_robots);
     auto footprint = site.crate.base_footprint;
-    auto bigger_half_footprint = (footprint[0] > footprint[1] ? footprint[0]/2.0 : footprint[1]/2.0);
-    auto smaller_half_footprint = (footprint[0] < footprint[1] ? footprint[0]/2.0 : footprint[1]/2.0);
+    bool X_longer_than_Y = footprint[0] > footprint[1];
+    double half_x = footprint[0]/2.0;
+    double half_y = footprint[1]/2.0;
 
     if (num_robots == 2) {
-        ret.push_back({bigger_half_footprint, 0, 180});
-        ret.push_back({-bigger_half_footprint, 0, 0});
+        if (X_longer_than_Y) {
+            ret.push_back({half_x, 0, 180});
+            ret.push_back({-half_x, 0, 0});
+        } else {
+            ret.push_back({0, half_y, 270});
+            ret.push_back({0, -half_y, 90});
+        }
     } else if (num_robots == 3) {
-        ret.push_back({bigger_half_footprint-0.5, smaller_half_footprint, 270});
-        ret.push_back({bigger_half_footprint-0.5, -smaller_half_footprint, 90});
-        ret.push_back({-bigger_half_footprint, 0, 0});
+        if (X_longer_than_Y) {
+            ret.push_back({half_x-0.2, half_y, 270});
+            ret.push_back({half_x-0.2, -half_y, 90});
+            ret.push_back({-half_x, 0, 0});
+        } else {
+            ret.push_back({half_x, half_y-0.2, 180});
+            ret.push_back({-half_x, half_y-0.2, 0});
+            ret.push_back({0, -half_y, 90});
+        }
     } else if (num_robots == 4) {
-        ret.push_back({bigger_half_footprint, 0, 180});
-        ret.push_back({-bigger_half_footprint, 0, 0});
-        ret.push_back({0, smaller_half_footprint, 270});
-        ret.push_back({0, -smaller_half_footprint, 90});
+        ret.push_back({half_x, 0, 180});
+        ret.push_back({-half_x, 0, 0});
+        ret.push_back({0, half_y, 270});
+        ret.push_back({0, -half_y, 90});
     } else {
         throw std::invalid_argument("There must be fewer than 5 robots. We cannot lift this crate!");
-    }
-    if (footprint[1] > footprint[0]) {
-        for (auto& pos : ret) {
-            auto temp = pos[0];
-            pos[0] = pos[1];
-            pos[1] = temp;
-            pos[2] = (static_cast<int>(pos[2])+90)%360;
-        }
     }
 
     return ret;
