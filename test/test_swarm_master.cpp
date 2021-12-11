@@ -216,7 +216,27 @@ TEST(SwarmMasterTests, TestAssignmentsForFourRobotReq) {
     EXPECT_TRUE(found_pos_in_vec(pos_along_crate, {0, 2, 270}));
 }
 
+// TEST(SwarmMasterTests, TestBreakDownAssignment) {
+//     SimpleClosestDesignator designator;
+//     SwarmMaster master(&designator);
+//     std::vector<int> robot_ids = add_buncha_robots(&master);
+//     int site_id = master.add_crate_to_system({{3,2,1}, {6,5,4}, {6,4}, 1});
+//     const auto& assignments = master.assign_robots_to_crates();
+//     for (const auto& assignment : *assignments) {
+//         const auto& tasks = master.break_down_assignment(assignment);
+//         for (const auto& task : *tasks) {
+//             if (task.task == task.Drive) {
+//                 EXPECT_EQ(task.num_param_dict.at("ToX"), 9);
+//             } else if (task.task == task.MvPlatform) {
 
+//             } else if (task.task == task.Wait) {
+
+//             } else {
+//                 EXPECT_TRUE(false);
+//             }
+//         }
+//     }
+// }
 
 std::vector<int> add_buncha_robots(SwarmMaster* master) {
     std::vector<int> ret{};
