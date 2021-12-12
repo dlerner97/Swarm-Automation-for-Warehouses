@@ -66,9 +66,18 @@ class Site {
         return site;
     }
 
+    /**
+     * @brief Calculate squared distances between all robots and individual site
+     * 
+     * @param robots 
+     */
     void populate_robot_dists(std::unordered_map<int, Robot>& robots);
 
+    /**
+     * @brief Get the n closest robots to site
+     * 
+     * @param n 
+     * @return std::vector<RobotDist> 
+     */
     std::vector<RobotDist> get_n_closest(int n);
-
-    std::vector<RobotDist> find_all_lt_dist(double dist);
 };
