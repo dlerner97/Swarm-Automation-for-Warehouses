@@ -299,6 +299,5 @@ bool operator==(const Task& t1, const Task& t2) {
     bool ret = true;
     ret = ret && (t1.task == t2.task);
     ret = ret && (t1.num_param_dict == t2.num_param_dict);
-    ret = ret && (t1.command_param_dict == t2.command_param_dict);
     return ret;
 }
