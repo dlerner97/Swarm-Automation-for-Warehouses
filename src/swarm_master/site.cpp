@@ -17,7 +17,7 @@
 
 void Site::populate_robot_dists(std::unordered_map<int, Robot>& robots) {
     for (const auto& robot : robots) {
-        double dist_sq = pow(pos[0], robot.second.pos[0]) + pow(pos[1], robot.second.pos[1]);
+        double dist_sq = pow(crate.start_pos[0], robot.second.pos[0]) + pow(crate.start_pos[1], robot.second.pos[1]);
         dist_to_robots.push_back({robot.first, dist_sq});
     }
     std::sort(dist_to_robots.begin(), dist_to_robots.end());
@@ -29,13 +29,4 @@ std::vector<RobotDist> Site::get_n_closest(int n) {
     else if (n >= dist_to_robots.size()) throw std::invalid_argument("Not enough robots");
     else
         return std::vector<RobotDist>(dist_to_robots.begin(), dist_to_robots.begin()+n);
-}
-
-std::vector<RobotDist> Site::find_all_lt_dist(double dist) {
-    int index = 0;
-    for (std::size_t i=0; i < dist_to_robots.size(); i++) {
-        if (dist_to_robots[i].dist_sq > dist) break;
-        index = i;
-    }
-    return get_n_closest(index);
 }

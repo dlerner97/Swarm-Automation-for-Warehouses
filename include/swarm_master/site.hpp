@@ -35,18 +35,11 @@ class Site {
     int site_id;
     Crate crate{};
     int robots_required;
-    std::array<double, 2> pos;
     std::vector<int> assigned_ids{};
     std::vector<RobotDist> dist_to_robots{};
 
-    Site(int _site_id, int _robots_req, std::array<double, 2>& _pos):
-        site_id{_site_id},
-        robots_required{_robots_req},
-        pos{_pos} {}
-
     Site(int id, const Crate& _crate, double weight_per_robot) :
-            site_id{id},
-            pos{_crate.base_footprint[0], _crate.base_footprint[1]} {
+            site_id{id} {
         double val = std::ceil(_crate.mass/weight_per_robot);
         if (val < 2) val = 2;
         robots_required = static_cast<int>(val);
@@ -57,7 +50,6 @@ class Site {
         this->assigned_ids = site.assigned_ids;
         this->crate = site.crate;
         this->dist_to_robots = site.dist_to_robots;
-        this->pos = site.pos;
         this->site_id = site.site_id;
         this->robots_required = site.robots_required;
     }
