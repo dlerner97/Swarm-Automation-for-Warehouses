@@ -30,11 +30,6 @@ class RosSwarmMaster {
   ros::ServiceServer swarm_reset_server;
   ros::ServiceServer swarm_connect_server;
   ros::Subscriber swarm_task_subscriber;
-
-  std::string robot_namespace_begin;
-  std::string task_server_name;
-
-  std::unordered_map<int, ros::Subscriber> all_pos_subscriber;
   std::unordered_map<int, ros::Publisher> all_task_publisher;
   std::unordered_map<int, ros::Publisher> all_site_ready_pub;
   std::unordered_map<int, ros::Subscriber> robot_site_waiting_pub;
